@@ -10,3 +10,15 @@ C:\Users\Nick\Documents\Projects\Libraries\InSharp\Test\bin\Debug\LowLevelOpsHel
 C:\Users\Nick\Documents\Projects\Libraries\InSharp\Test\obj\Debug\Test.csproj.CopyComplete
 C:\Users\Nick\Documents\Projects\Libraries\InSharp\Test\obj\Debug\Test.exe
 C:\Users\Nick\Documents\Projects\Libraries\InSharp\Test\obj\Debug\Test.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\bin\Debug\Test.exe.config
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\bin\Debug\Test.exe
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\bin\Debug\Test.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\bin\Debug\InSharp.dll
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\bin\Debug\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\bin\Debug\InSharp.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\bin\Debug\LowLevelOpsHelper.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\obj\Debug\Test.csprojAssemblyReference.cache
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\obj\Debug\Test.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\obj\Debug\Test.csproj.CopyComplete
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\obj\Debug\Test.exe
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\Test\obj\Debug\Test.pdb
