@@ -1,0 +1,10 @@
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\bin\Debug\ShowCode.exe.config
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\bin\Debug\ShowCode.exe
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\bin\Debug\ShowCode.pdb
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\obj\Debug\ShowCode.csprojAssemblyReference.cache
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\obj\Debug\ShowCode.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\obj\Debug\ShowCode.exe
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\obj\Debug\ShowCode.pdb
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\bin\Debug\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\bin\Debug\LowLevelOpsHelper.pdb
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\ShowCode\obj\Debug\ShowCode.csproj.CopyComplete

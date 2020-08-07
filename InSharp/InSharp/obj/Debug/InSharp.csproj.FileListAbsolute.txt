@@ -1,0 +1,9 @@
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\obj\Debug\InSharp.csprojAssemblyReference.cache
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\obj\Debug\InSharp.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\bin\Debug\InSharp.dll
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\bin\Debug\InSharp.pdb
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\bin\Debug\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\bin\Debug\LowLevelOpsHelper.pdb
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\obj\Debug\InSharp.csproj.CopyComplete
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\obj\Debug\InSharp.dll
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\InSharp\obj\Debug\InSharp.pdb

@@ -1,0 +1,6 @@
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\LowLevelOpsHelper\bin\Debug\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\LowLevelOpsHelper\bin\Debug\LowLevelOpsHelper.pdb
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\LowLevelOpsHelper\obj\Debug\LowLevelOpsHelper.csprojAssemblyReference.cache
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\LowLevelOpsHelper\obj\Debug\LowLevelOpsHelper.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\LowLevelOpsHelper\obj\Debug\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\Projects\Libraries\InSharp\LowLevelOpsHelper\obj\Debug\LowLevelOpsHelper.pdb

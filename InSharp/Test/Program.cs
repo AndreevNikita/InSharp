@@ -1,0 +1,417 @@
+﻿using InSharp;
+using LowLevelOpsHelper;
+using System;
+using System.Dynamic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
+
+namespace ILShellTester {
+
+	public class Vector { 
+		public double x, y;
+		double _z;
+		public double z { 
+			get { 
+				return _z;
+			} 
+			set { 
+				_z = value;
+			}
+		}
+
+		public double Length { 
+			get => Math.Sqrt(x * x + y * y + z * z);
+		} 
+
+		public Vector(double x, double y, double z) { 
+			this.x = x;
+			this.y = y;
+			this._z = z;
+		}
+
+		public static Vector operator+(Vector a, Vector b) { 
+			return new Vector(a.x + b.x, a.y + b.y, a.z + b.z);
+		}
+
+		public static Vector operator*(Vector a, double b) { 
+			return new Vector(a.x * b, a.y * b, a.z * b);
+		}
+
+		public override string ToString() { 
+			return string.Format("({0}; {1}; {2})", x, y, z);
+		}
+	}
+
+	public class MyCustomAttribute : Attribute { 
+	}
+
+	public static class VectorExtend { 
+		public static bool IsNull(this Vector vec) { 
+			return object.ReferenceEquals(vec, null);
+		}
+	}
+
+
+	public class Program {
+
+		public static void Main(string[] args) { 
+			testFunc12();
+			Console.ReadKey();
+		}
+
+		//Simple multiplication
+		static void testFunc1() { 
+			ILGen<Func<int, int, float>> gen = new ILGen<Func<int, int, float>>("TestFunc1", true);
+
+			//Function
+			gen.Return( Expr.Mul(gen.args[0], gen.Const(3.5f)) ) ;
+
+			var func = gen.compile(true);
+			Console.WriteLine("Result: {0}", func(15, 3));
+		}
+
+		//Add vector object and vector object
+		static void testFunc2() {
+
+			var gen = new ILGen<Func<Vector, Vector, Vector>>("TestFunc2", true);
+
+			//Function
+			gen.Return( Expr.Add(gen.args[0], gen.args[1]) ) ;
+
+
+			var func = gen.compile(true);
+			Console.WriteLine("Result: {0}", func(new Vector(12, 5, 6), new Vector(8, 2, 2)));
+		}
+
+		//Multiply Vector object and int
+		static void testFunc3() {
+			var gen = new ILGen<Func<Vector, Vector>>("TestFunc3", true);
+
+			//Function
+			gen.Return( Expr.Mul(gen.args[0], 5) ) ;
+
+
+			var func = gen.compile(true);
+			Console.WriteLine("Result: {0}", func(new Vector(12, 5, 6)));
+		}
+
+		//Print property and set it to Length of vector
+		static void testFunc4() { 
+			var gen = new ILGen<Action<Vector>>("TestFunc4", true);
+
+			//Function
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", Expr.Const("Vectors z coords: {0}"), Expr.NewArray(typeof(object), gen.args[0].Member("z"))));
+			gen.Line(gen.args[0].Member("z").Set(gen.args[0].Member("Length")));
+			//gen.Return( gen.Op(gen.args[0], Ops.Mul, 5) ) ;
+
+
+			var func = gen.compile(true);
+			Vector vec = new Vector(3.0, 0.0, 4.0);
+			func(vec);
+			Console.WriteLine("Changed vector: {0}", vec);
+		}
+
+		//Test if construction
+		static void testFunc5_1() {
+			var gen = new ILGen<Action<int>>("TestFunc5_1", true);
+
+			//Function
+			gen.If(Expr.Greater(gen.args[0], 0));
+			//If arg0 > 0
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is positive", Expr.NewArray(typeof(object), gen.args[0])));
+			gen.ElseIf(Expr.Less(gen.args[0], 0));
+			//Else if arg0 < 0
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is negative", Expr.NewArray(typeof(object), gen.args[0])));
+			gen.Else();
+			//else (arg0 == 0)
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "Zero"));
+			gen.EndIf();
+
+
+			var func = gen.compile(true);
+			func(15);
+			func(3);
+			func(0);
+			func(-90);
+		}
+
+		//Overloaded operators
+		static void testFunc5_2() {
+			var gen = new ILGen<Action<int>>("TestFunc5_2", true);
+
+			//Function
+			gen.If(gen.args[0] > 0);
+			//If arg0 > 0
+				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is positive", Expr.NewArray(typeof(object), gen.args[0])));
+			gen.ElseIf(gen.args[0] < 0);
+			//Else if arg0 < 0
+				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is negative", Expr.NewArray(typeof(object), gen.args[0])));
+			gen.Else();
+			//else (arg0 == 0)
+				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "Zero"));
+			gen.EndIf();
+
+
+			var func = gen.compile(true);
+			func(15);
+			func(3);
+			func(0);
+			func(-90);
+		}
+
+		//Fibonacci + test while construcion
+		static void testFunc6() {
+			var gen = new ILGen<Func<int, long[]>>("TestFunc6", true);
+
+			//Function
+			ILVar resultArray = gen.DeclareVar(typeof(long[]));
+			ILVar arrayIndex = gen.DeclareVar(typeof(int));
+			gen.Line(resultArray.Set(Expr.NewArray(typeof(long), gen.args[0])));
+			gen.Line(resultArray.Index(0).Set(0));
+			gen.Line(resultArray.Index(1).Set(1));
+			gen.Line(arrayIndex.Set(2));
+			gen.While(Expr.NotEquals(arrayIndex, resultArray.ArrayLength));
+				gen.Line(resultArray.Index(arrayIndex).Set(resultArray.Index(arrayIndex - 1) + resultArray.Index(arrayIndex - 2)));
+				gen.Line(arrayIndex.Set(arrayIndex + 1));
+			gen.EndWhile();
+			gen.Return(resultArray);
+
+			var func = gen.compile(true);
+			long[] functionResultArray = func(100);
+			for(int index = 0; index < functionResultArray.Length; index++)
+				Console.Write("{0}; ", functionResultArray[index]);
+			Console.WriteLine();
+			
+		}
+
+		//Identity 2D matrix
+		static void testFunc7() { 
+			var gen = new ILGen<Func<int, double[,]>>("TestFunc7", true);
+
+			ILVar resultArray = gen.DeclareVar(typeof(double[,]));
+			ILVar i = gen.DeclareVar(typeof(int));
+			ILVar j = gen.DeclareVar(typeof(int));
+			gen.Line(resultArray.Set(Expr.NewArray(typeof(double), gen.args[0], gen.args[0])));
+			gen.Line(i.Set(0));
+			gen.While(i < gen.args[0]);
+				gen.Line(j.Set(0));
+				gen.While(j < gen.args[0]);
+					gen.If(Expr.Equals(i, j));
+						gen.Line(resultArray.Index(i, j).Set(1.0));
+					gen.Else();
+						gen.Line(resultArray.Index(i, j).Set(0.0));
+					gen.EndIf();
+					gen.Line(j.Set(j + 1));
+				gen.EndWhile();
+				gen.Line(i.Set(i + 1));
+			gen.EndWhile();
+			gen.Return(resultArray);
+			var func = gen.compile(true);
+			
+			double[,] result = func(20);
+			
+			for(int arrayI = 0; arrayI < result.GetLength(0); arrayI++) {
+				for(int arrayJ = 0; arrayJ < result.GetLength(0); arrayJ++)
+					Console.Write("{0}; ", result[arrayI, arrayJ]);
+				Console.WriteLine();
+			}
+		}
+
+		//Vectors array sum
+		static void testFunc8() { 
+			var gen = new ILGen<Func<Vector[], Vector>>("TestFunc8", true);
+
+			ILVar resultVector = gen.DeclareVar<Vector>();
+			ILVar currentIndex = gen.DeclareVar<int>();
+
+			gen.Line(resultVector.Set(Expr.NewObject(typeof(Vector), 0.0, 0.0, 0.0)));
+			gen.Line(currentIndex.Set(0));
+			gen.While(currentIndex < gen.args[0].ArrayLength);
+				gen.Line(resultVector.Set(resultVector + gen.args[0].Index(currentIndex)));
+				gen.Line(currentIndex.Set(currentIndex + 1));
+			gen.EndWhile();
+
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "Result vector from function: {0}", resultVector));
+			gen.Return(resultVector);
+
+			var func = gen.compile(true);
+			Vector result = func(new [] { new Vector(2, 4.5, 1), new Vector(17, 23, 50.3), new Vector(12.5, 22, 7) });
+			Console.WriteLine("Result from parent function: {0}", result);
+		} 
+
+		//Num fields sum
+		static Func<T, double> compile9<T>() { 
+			var gen = new ILGen<Func<T, double>>(typeof(T).Name + "_fields_sum", true);
+
+			ILVar counter = gen.DeclareVar<double>();
+			gen.Line(counter.Set(0.0));
+			foreach(FieldInfo fieldInfo in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(info => info.FieldType == typeof(double)))
+				gen.Line(counter.Set(counter + gen.args[0].Field(fieldInfo)));
+			gen.Return(counter);
+
+			return gen.compile(true);
+		}
+
+		static void testFunc9() { 
+			
+			var func = compile9<Vector>();
+			Random rand = new Random();
+			for(int counter = 0; counter < 20; counter++) { 
+				Vector checkVector = new Vector(Math.Round((rand.NextDouble() * 40.0 - 20.0), 1), Math.Round((rand.NextDouble() * 40.0 - 20.0), 1), Math.Round((rand.NextDouble() * 40.0 - 20.0), 1));
+				Console.WriteLine("Sum result for {0}: {1}", checkVector, func(checkVector));
+			}
+			
+		} 
+
+
+		//Zero all function
+		static Action<T> compile10<T>() { 
+			var gen = new ILGen<Action<T>>(typeof(T).Name + "_fields_sum", true);
+
+			foreach(FieldInfo fieldInfo in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(info => info.FieldType == typeof(double)))
+				gen.Line(gen.args[0].Field(fieldInfo).Set(0.0));
+			gen.Return();
+
+			return gen.compile(true);
+		}
+
+		static void testFunc10() { 
+			
+			var func = compile10<Vector>();
+			Random rand = new Random();
+			for(int counter = 0; counter < 20; counter++) { 
+				Vector checkVector = new Vector(Math.Round((rand.NextDouble() * 40.0 - 20.0), 1), Math.Round((rand.NextDouble() * 40.0 - 20.0), 1), Math.Round((rand.NextDouble() * 40.0 - 20.0), 1));
+				Console.WriteLine("Before: {0}", checkVector);
+				func(checkVector);
+				Console.WriteLine("After: {0}", checkVector);
+			}
+			
+		} 
+
+		//Structs and classes methods, fields and 
+		class AClass { 
+			int foo;
+			int Bar { get; set; }
+
+			void baz() { 
+				Console.WriteLine("AClass: foo: {0}; Bar: {1}", foo, Bar);
+			}
+
+			AClass GetMe() { 
+				return this;
+			}
+
+			AClass GetMe(AClass arg1, AClass arg2) { 
+				return this;
+			}
+		}
+
+		struct AStruct { 
+			int foo;
+			int Bar { get; set; }
+
+			void baz() { 
+				Console.WriteLine("AStruct: foo: {0}; Bar: {1}", foo, Bar);
+			}
+
+			AStruct GetMe() { 
+				return this;
+			}
+
+			AStruct GetMe(AStruct arg1, AStruct arg2) { 
+				return this;
+			}
+
+		}
+
+		//Fields and properties test
+		static void testFunc11() { 
+			var gen = new ILGen<Action>("TestFunc11", true);
+
+			ILVar var_aclass = gen.DeclareVar<AClass>();
+			ILVar var_astruct = gen.DeclareVar<AStruct>();
+			ILVar var_buffer = gen.DeclareVar<int>();
+			gen.Line( Expr.CallStatic(typeof(Console), "WriteLine", "Init objects...") );
+			//Init AClass object
+			gen.Line( var_aclass.Set(Expr.NewObject(typeof(AClass))) );
+			gen.Line( var_aclass.Member("foo").Set(11) );
+			gen.Line( var_aclass.Member("Bar").Set(12) );
+			
+			//Init AStruct object
+			gen.Line( var_astruct.Set(Expr.NewObject(typeof(AStruct))) );
+			gen.Line( var_astruct.Member("foo").Set(21) );
+			gen.Line( var_astruct.Member("Bar").Set(22) );
+
+			gen.Line( var_aclass.CallMethod("baz") );
+			gen.Line( var_astruct.CallMethod("baz") );
+
+			//Exchange check
+			gen.Line( Expr.CallStatic(typeof(Console), "WriteLine", "Change fields...") );
+			gen.Line( var_buffer.Set(var_aclass.Member("foo")) );
+			gen.Line( var_aclass.Member("foo").Set(var_astruct.Member("foo")) );
+			gen.Line( var_astruct.Member("foo").Set(var_buffer) );
+
+			gen.Line( var_buffer.Set(var_aclass.Member("Bar")) );
+			gen.Line( var_aclass.Member("Bar").Set(var_astruct.Member("Bar")) );
+			gen.Line( var_astruct.Member("Bar").Set(var_buffer) );
+
+			gen.Line( var_aclass.CallMethod("baz") );
+			gen.Line( var_astruct.CallMethod("baz") );
+
+			//Cross exchange check
+			gen.Line( Expr.CallStatic(typeof(Console), "WriteLine", "Cross change fields...") );
+			gen.Line( var_buffer.Set(var_aclass.Member("Bar")) );
+			gen.Line( var_aclass.Member("Bar").Set(var_astruct.Member("foo")) );
+			gen.Line( var_astruct.Member("foo").Set(var_buffer) );
+
+			gen.Line( var_buffer.Set(var_aclass.Member("foo")) );
+			gen.Line( var_aclass.Member("foo").Set(var_astruct.Member("Bar")) );
+			gen.Line( var_astruct.Member("Bar").Set(var_buffer) );
+
+			gen.Line( var_aclass.CallMethod("baz") );
+			gen.Line( var_astruct.CallMethod("baz") );
+
+			//Cross change
+
+			var func =  gen.compile(true);
+			func();
+		}
+
+
+
+		//Difficult calls crash test
+		static AClass t12_aclass = new AClass();
+		private static AClass t12_f1() { 
+			return t12_aclass;
+		}
+
+		static AStruct t12_astruct = new AStruct();
+		private static AStruct t12_f2() { 
+			return t12_astruct;
+		}
+
+
+		public static void testFunc12() {
+			var gen = new ILGen<Action>("TestFunc11", true);
+
+			ILVar var_astruct = gen.DeclareVar(typeof(AStruct));
+			gen.Line( var_astruct.Member("foo").Set(11) );
+			gen.Line( var_astruct.Member("Bar").Set(12) );
+			//t12_f1().GetMe(t12_f1().GetMe(), t12_f1().GetMe()).GetMe().foo = var_astruct.GetMe().GetMe().GetMe().foo;
+			gen.Line( Expr.CallStatic(typeof(Program), "t12_f1").CallMethod("GetMe", Expr.CallStatic(typeof(Program), "t12_f1").CallMethod("GetMe"), Expr.CallStatic(typeof(Program), "t12_f1").CallMethod("GetMe")).CallMethod("GetMe").Member("foo").Set(var_astruct.CallMethod("GetMe").CallMethod("GetMe").CallMethod("GetMe").Member("foo")) );
+			//t12_f1().GetMe().GetMe().Bar = var_astruct.GetMe().GetMe(var_astruct.GetMe().GetMe(), var_astruct.GetMe().GetMe()).GetMe().GetMe().Bar;
+			gen.Line( Expr.CallStatic(typeof(Program), "t12_f1").CallMethod("GetMe").CallMethod("GetMe").Member("Bar").Set(var_astruct.CallMethod("GetMe").CallMethod("GetMe", var_astruct.CallMethod("GetMe").CallMethod("GetMe"), var_astruct.CallMethod("GetMe").CallMethod("GetMe")).CallMethod("GetMe").CallMethod("GetMe").Member("Bar")) );
+			gen.Line( Expr.CallStatic(typeof(Program), "t12_f1").Member("baz").call() );
+
+			var func =  gen.compile(true);
+			func();
+		}
+	}
+
+	
+
+}
