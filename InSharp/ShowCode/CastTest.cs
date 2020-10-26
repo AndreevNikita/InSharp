@@ -61,4 +61,16 @@ namespace ShowCode_Casts {
 			Console.WriteLine(ClassesOps.OPERATION_INC.FindMethod(typeof(A2Class)));
 		}
 	}
+
+	class TestClass { 
+		public virtual void foo() { }
+	}
+
+	class TestStruct : TestClass { 
+
+	}
+
+	class TestClass2 : TestStruct { 
+	}
+
 }

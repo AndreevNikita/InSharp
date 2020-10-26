@@ -177,9 +177,18 @@ namespace LowLevelOpsHelper {
 			return op1Type.GetMethod(operation.MethodName, new[] { op1Type });
 		}
 
-		public static void GetMultipleDimentionsArrayGetSet(Type type, out MethodInfo getMethodInfo, out MethodInfo setMethodInfo) {
+		public static void GetMultipleDimentionsArrayGetSet(Type type, out MethodInfo getMethodInfo, out MethodInfo setMethodInfo, out MethodInfo addrMethodInfo) {
 			getMethodInfo = type.GetMethod("Get");
 			setMethodInfo = type.GetMethod("Set");
+			addrMethodInfo = type.GetMethod("Address");
+		}
+
+		public static string GetObjectIndexGetMethodName() {
+			return "get_Item";
+		}
+
+		public static string GetObjectIndexSetMethodName() {
+			return "set_Item";
 		}
 
 		public static ConstructorInfo GetMultipleDimentionsArrayConstructor(Type arrayType) {

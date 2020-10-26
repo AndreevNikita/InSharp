@@ -8,6 +8,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using Test;
 
 namespace ILShellTester {
 
@@ -59,7 +60,21 @@ namespace ILShellTester {
 	public class Program {
 
 		public static void Main(string[] args) { 
+			testFunc1();
+			testFunc2();
+			testFunc3();
+			testFunc4();
+			testFunc5_1();
+			testFunc5_2();
+			testFunc6();
+			testFunc7();
+			testFunc8();
+			testFunc9();
+			testFunc10();
+			testFunc11();
 			testFunc12();
+			testFunc13();
+			testFunc14();
 			Console.ReadKey();
 		}
 
@@ -68,7 +83,7 @@ namespace ILShellTester {
 			ILGen<Func<int, int, float>> gen = new ILGen<Func<int, int, float>>("TestFunc1", true);
 
 			//Function
-			gen.Return( Expr.Mul(gen.args[0], gen.Const(3.5f)) ) ;
+			gen.Return( Expr.Mul(gen.args[0], gen.Const(3.5f)) ) ; //Compile function
 
 			var func = gen.compile(true);
 			Console.WriteLine("Result: {0}", func(15, 3));
@@ -99,12 +114,22 @@ namespace ILShellTester {
 			Console.WriteLine("Result: {0}", func(new Vector(12, 5, 6)));
 		}
 
+		static void func4Orig(Vector arg0) {
+			object[] args = new object[] {
+				arg0.x,
+				arg0.y,
+				arg0.z,
+			};
+			Console.WriteLine("Vectors z coords: {0}, {1}, {2}", args);
+			arg0.z = arg0.Length;
+		}
+
 		//Print property and set it to Length of vector
 		static void testFunc4() { 
 			var gen = new ILGen<Action<Vector>>("TestFunc4", true);
 
 			//Function
-			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", Expr.Const("Vectors z coords: {0}"), Expr.NewArray(typeof(object), gen.args[0].Member("z"))));
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", Expr.Const("Vectors x, y, z coords: {0}; {1}; {2}"), Expr.CreateArray(typeof(object), gen.args[0].Member("x"), gen.args[0].Member("y"), gen.args[0].Member("z"))));
 			gen.Line(gen.args[0].Member("z").Set(gen.args[0].Member("Length")));
 			//gen.Return( gen.Op(gen.args[0], Ops.Mul, 5) ) ;
 
@@ -122,10 +147,10 @@ namespace ILShellTester {
 			//Function
 			gen.If(Expr.Greater(gen.args[0], 0));
 			//If arg0 > 0
-			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is positive", Expr.NewArray(typeof(object), gen.args[0])));
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is positive", Expr.CreateArray(typeof(object), gen.args[0])));
 			gen.ElseIf(Expr.Less(gen.args[0], 0));
 			//Else if arg0 < 0
-			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is negative", Expr.NewArray(typeof(object), gen.args[0])));
+			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is negative", Expr.CreateArray(typeof(object), gen.args[0])));
 			gen.Else();
 			//else (arg0 == 0)
 			gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "Zero"));
@@ -146,10 +171,10 @@ namespace ILShellTester {
 			//Function
 			gen.If(gen.args[0] > 0);
 			//If arg0 > 0
-				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is positive", Expr.NewArray(typeof(object), gen.args[0])));
+				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is positive", Expr.CreateArray(typeof(object), gen.args[0])));
 			gen.ElseIf(gen.args[0] < 0);
 			//Else if arg0 < 0
-				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is negative", Expr.NewArray(typeof(object), gen.args[0])));
+				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is negative", Expr.CreateArray(typeof(object), gen.args[0])));
 			gen.Else();
 			//else (arg0 == 0)
 				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "Zero"));
@@ -170,7 +195,7 @@ namespace ILShellTester {
 			//Function
 			ILVar resultArray = gen.DeclareVar(typeof(long[]));
 			ILVar arrayIndex = gen.DeclareVar(typeof(int));
-			gen.Line(resultArray.Set(Expr.NewArray(typeof(long), gen.args[0])));
+			gen.Line(resultArray.Set(Expr.InitArray(typeof(long), gen.args[0])));
 			gen.Line(resultArray.Index(0).Set(0));
 			gen.Line(resultArray.Index(1).Set(1));
 			gen.Line(arrayIndex.Set(2));
@@ -195,7 +220,7 @@ namespace ILShellTester {
 			ILVar resultArray = gen.DeclareVar(typeof(double[,]));
 			ILVar i = gen.DeclareVar(typeof(int));
 			ILVar j = gen.DeclareVar(typeof(int));
-			gen.Line(resultArray.Set(Expr.NewArray(typeof(double), gen.args[0], gen.args[0])));
+			gen.Line(resultArray.Set(Expr.InitArray(typeof(double), gen.args[0], gen.args[0])));
 			gen.Line(i.Set(0));
 			gen.While(i < gen.args[0]);
 				gen.Line(j.Set(0));
@@ -396,7 +421,7 @@ namespace ILShellTester {
 
 
 		public static void testFunc12() {
-			var gen = new ILGen<Action>("TestFunc11", true);
+			var gen = new ILGen<Action>("TestFunc12", true);
 
 			ILVar var_astruct = gen.DeclareVar(typeof(AStruct));
 			gen.Line( var_astruct.Member("foo").Set(11) );
@@ -410,6 +435,54 @@ namespace ILShellTester {
 			var func =  gen.compile(true);
 			func();
 		}
+
+		public static void testFunc13() { 
+
+			var gen = new ILGen<Func<string>>("TestFunc13", true);
+
+			ILVar str = gen.DeclareVar<string>();
+			ILVar arr = gen.DeclareVar<int[,]>();
+			gen.Line( arr.Set(Expr.InitArray(typeof(int), new Expr[] { 2, 2 })) );
+			gen.Line( str.Set(arr.Index(0, 0).CompatiblePass<string>()) );
+			gen.Return(str);
+
+			var func =  gen.compile(true);
+			func();
+		}
+
+		public static void testFunc14() { 
+			var gen = new ILGen<Action>("TestFunc14", true);
+
+			ILVar matrix = gen.DeclareVar(typeof(int[,]));
+			gen.Line(matrix.Set(Expr.CreateArray(typeof(int), new Expr[] { 
+					1, 2, 3,
+					4, 5, 6,
+					7, 8, 9
+				}, new int[] { 3, 3})));
+
+			ILVar index1 = gen.DeclareVar(typeof(int));
+			gen.Line( index1.Set(0) );
+			ILVar index2 = gen.DeclareVar(typeof(int));
+			gen.Line( index2.Set(0) );
+			ILVar lineString = gen.DeclareVar(typeof(string));
+
+			gen.While( Expr.Less(index1, matrix.GetArrayDimensionLength(0)) );
+				gen.Line( lineString.Set("") );
+				gen.Line( index2.Set(0) );
+				gen.While( Expr.Less(index2, matrix.GetArrayDimensionLength(1)) );
+					gen.Line( lineString.Set(Expr.Add(Expr.Add(lineString, matrix.Index(index1, index2).CompatiblePass(typeof(string))), "; ")) );
+					gen.Line( index2.Set(Expr.Add(index2, 1)) );
+				gen.EndWhile();
+				
+				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", lineString));
+
+				gen.Line( index1.Set(Expr.Add(index1, 1)) );
+			gen.EndWhile();
+
+			var func =  gen.compile(true);
+			func();
+		}
+		
 	}
 
 	

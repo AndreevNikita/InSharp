@@ -24,6 +24,15 @@ namespace ShowCode {
 
 		public void gamma(int i) { }
 
+		public int this[int index] {
+			get {
+				return 0;
+			}
+			set {
+
+			}
+		}
+
 	}
 
 	class BClass { 
@@ -60,6 +69,15 @@ namespace ShowCode {
 
 		public int getFoo(int a) { 
 			return foo;
+		}
+
+		public int this[int index] {
+			get {
+				return 0;
+			}
+			set {
+
+			}
 		}
 	}
 
@@ -277,6 +295,65 @@ namespace ShowCode {
 
 		static AStruct func42() { 
 			return new AStruct(12);
+		}
+
+
+
+		static int func43(AClass a) { 
+			return a[2];
+		}
+
+		static string func44(string a, int b) { 
+			return a + b;
+		}
+
+		static string func45() { 
+			string a = "";
+			int[,] b = new int[2, 2];
+			return a + b[0, 0];
+		}
+
+		static string func45_2(string a, int[,] b) {
+			return a + b[1, 0];
+		}
+
+		static string func45_3(string a, int[] b) {
+			return a + b[1];
+		}
+
+		static string func45_4(string a, object[,] b) {
+			return a + b[1, 1];
+		}
+
+
+		static string func45_5(string a, object[] b) {
+			return a + b[1];
+		}
+
+		static void func46() { 
+			int[,] matrix = new int[3, 3];
+			matrix[0, 0] = 1;
+			matrix[0, 1] = 2;
+			matrix[0, 2] = 1;
+
+			matrix[1, 0] = 2;
+			matrix[1, 1] = 4;
+			matrix[1, 2] = 2;
+
+			matrix[2, 0] = 1;
+			matrix[2, 1] = 2;
+			matrix[2, 2] = 1;
+			int index1 = 0;
+			int index2 = 0;
+			
+			while(index1 < matrix.GetLength(0)) {
+				string line = "";
+				while(index2 < matrix.GetLength(1)) {
+					line = ((line + "; ") + matrix[index1, index2]);
+					index2 = index2 + 1;
+				}
+				index1 = index1 + 1;
+			}
 		}
 	}
 }

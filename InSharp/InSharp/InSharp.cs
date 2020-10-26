@@ -33,7 +33,7 @@ namespace InSharp {
 		public abstract Type Type { get; }
 		public bool IsVoidOrNullType { get => Type == null || Type == typeof(void); }
 
-		public Expr NULL { get => new ILNull(); }
+		public static Expr NULL { get => new ILNull(); }
 
 		public abstract void emitPush(ILGen gen);
 
@@ -189,6 +189,10 @@ namespace InSharp {
 				return this;
 		}
 
+		public Expr CompatiblePass<T>() { 
+			return CompatiblePass(typeof(T));
+		}
+
 		public override string ToString() {
 			return String.Format("Expression ({0})", Type);
 		}
@@ -289,15 +293,40 @@ namespace InSharp {
 
 		//Arrays
 
-		public static Expr NewArray(Type elementType, params Expr[] size) {
-			if(size.Length < 1)
-				throw new InSharpException("Array can't have {0} dimensions", size.Length);
+		//Init empty array
+		public static Expr InitArray(Type elementType, params Expr[] sizes) {
+			if(sizes.Length < 1)
+				throw new InSharpException("Array can't have {0} dimensions", sizes.Length);
 
-			if(size.Length == 1)
-				return new ILCreateArray(elementType, size[0]);
+			if(sizes.Length == 1)
+				return new ILCreateArray(elementType, sizes[0]);
 			else
-				return CallConstructor(ClassesOps.GetMultipleDimentionsArrayConstructor(elementType.MakeArrayType(size.Length)), size);
+				return CallConstructor(ClassesOps.GetMultipleDimentionsArrayConstructor(elementType.MakeArrayType(sizes.Length)), sizes);
 		}
+
+		//Init array and fill
+
+		//1D array
+		public static Expr CreateArray(Type elementType, params Expr[] elements) {
+			return CreateArray(elementType, elements, new int[] { elements.Length });
+		}
+
+		public static Expr CreateArray(Type elementType, Expr[] elements, int[] sizes) {
+			if(sizes.Length < 1)
+				throw new InSharpException("Array can't have {0} dimensions", sizes.Length);
+			int expectedElementsCount = sizes.Aggregate((int acc, int dimSize) => acc * dimSize);
+			if(elements.Length != expectedElementsCount)
+				throw new InSharpException($"Unexpected elements count {elements.Length}. Expected: {expectedElementsCount}");
+
+
+			Expr initArrayExpr;
+			if(sizes.Length == 1)
+				initArrayExpr = new ILCreateArray(elementType, sizes[0]);
+			else
+				initArrayExpr = CallConstructor(ClassesOps.GetMultipleDimentionsArrayConstructor(elementType.MakeArrayType(sizes.Length)), sizes.Select((int dimensionSize) => new ILConst(dimensionSize)).ToArray());
+			return new ILInitArrayFill(initArrayExpr, sizes, elements);
+		}
+
 
 		public ILAssignable Index(params Expr[] indexExpressions) {
 			assetNullType();
@@ -309,8 +338,8 @@ namespace InSharp {
 			if(arrayRank == 1)
 				return new ILArrayIndex(this, indexExpressions[0]);
 			else {
-				ClassesOps.GetMultipleDimentionsArrayGetSet(Type, out MethodInfo getMethodInfo, out MethodInfo setMethodInfo);
-				return new ILMDArrayIndex(this, getMethodInfo, setMethodInfo, indexExpressions);//new ILProperty(this, );
+				ClassesOps.GetMultipleDimentionsArrayGetSet(Type, out MethodInfo getMethodInfo, out MethodInfo setMethodInfo, out MethodInfo addrMethodInfo);
+				return new ILMDArrayIndex(this, getMethodInfo, setMethodInfo, addrMethodInfo, indexExpressions);//new ILProperty(this, );
 			}
 		}
 
@@ -324,7 +353,7 @@ namespace InSharp {
 		}
 
 		public Expr GetArrayDimensionLength(Expr dimension) {
-			return new ILMethodCall(this, ClassesOps.GetArrayDimensionLengthMethodInfo(Type));
+			return new ILMethodCall(this, ClassesOps.GetArrayDimensionLengthMethodInfo(Type), dimension);
 		}
 
 		public Expr ArrayRank { 
@@ -554,11 +583,13 @@ namespace InSharp {
 		public readonly Expr ownerExpression;
 		public readonly MethodInfo getMethod;
 		public readonly MethodInfo setMethod;
+		public readonly MethodInfo addressMethod;
 		private Expr[] args; 
 
-		public ILMDArrayIndex(Expr ownerExpression, MethodInfo getMethod, MethodInfo setMethod, params Expr[] passedArgs) { 
+		public ILMDArrayIndex(Expr ownerExpression, MethodInfo getMethod, MethodInfo setMethod, MethodInfo addressMethod, params Expr[] passedArgs) { 
 			this.getMethod = getMethod;
 			this.setMethod = setMethod;
+			this.addressMethod = addressMethod;
 			this.ownerExpression = ownerExpression;
 			this.Type = ownerExpression.Type.GetElementType();
 			this.args = passedArgs.Select((arg) => arg.Type == typeof(int) ? arg : arg.CompatiblePass(typeof(int))).ToArray();
@@ -581,6 +612,20 @@ namespace InSharp {
 		public override void emitPop(ILGen gen) {
 			gen.il.Emit(OpCodes.Call, setMethod);
 			gen.OutDebug("OpCodes.Call {0}", setMethod);
+		}
+
+		public override void emitPushAddress(ILGen gen) {
+			if(Type.IsValueType) { 
+				ownerExpression.emitPush(gen);
+				foreach(Expr arg in args)
+					arg.emitPush(gen);
+				gen.il.Emit(OpCodes.Call, addressMethod);
+				gen.OutDebug("OpCodes.Call {0}", addressMethod);
+			} else { 
+				emitPush(gen);
+			}
+			
+			
 		}
 	}
 
@@ -692,26 +737,87 @@ namespace InSharp {
 	}
 
 	public class ILCreateArray : Expr { 
-		Type elementType;
+		public Type ElementType { get; }
 
 		public override Type Type { get; } 
 
 		Expr sizeExpr;
 
 		public ILCreateArray(Type elementType, Expr sizeExpr) { 
-			this.elementType = elementType;
+			this.ElementType = elementType;
 			this.Type = elementType.MakeArrayType();
 			this.sizeExpr = sizeExpr;
 		}
 
 		public override void emitPush(ILGen gen) {
 			sizeExpr.emitPush(gen);
-			gen.il.Emit(OpCodes.Newarr, elementType);
-			gen.OutDebug("OpCodes.Newarr, {0}", elementType);
+			gen.il.Emit(OpCodes.Newarr, ElementType);
+			gen.OutDebug("OpCodes.Newarr, {0}", ElementType);
 		}
 	}
 
 
+	public class ILInitArrayFill : Expr {
+		Expr initArrayExpr;
+		int[] sizes;
+		Expr[] values;
+
+		public override Type Type => initArrayExpr.Type;
+
+		public ILInitArrayFill(Expr initArrayExpr, int[] sizes, Expr[] values) { 
+			this.initArrayExpr = initArrayExpr;
+			this.sizes = sizes;
+			this.values = values.Select((Expr element) => element.CompatiblePass(initArrayExpr.Type.GetElementType())).ToArray();
+		}	
+		
+
+		public override void emitPush(ILGen gen) {
+			initArrayExpr.emitPush(gen);
+
+			if(sizes.Length == 1) { //1D Array
+				for(int index = 0; index < sizes[0]; index++) {
+					gen.il.Emit(OpCodes.Dup);
+					gen.OutDebug("OpCodes.Dup");
+					ILConst.PushOptimizedInt(index, gen);
+					values[0].emitPush(gen);
+					gen.il.Emit(OpCodes.Stelem_Ref);
+					gen.OutDebug("OpCodes.Stelem_Ref");
+				}
+			} else { //nD Array
+				ClassesOps.GetMultipleDimentionsArrayGetSet(Type, out MethodInfo getMethodInfo, out MethodInfo setMethodInfo, out _);
+
+
+				int valueArrayPos = 0;
+				int[] pos = new int[sizes.Length];
+				bool hasNext = true;
+				while(hasNext) { 
+					gen.il.Emit(OpCodes.Dup);
+					gen.OutDebug("OpCodes.Dup");
+
+					for(int dimensionIndex = 0; dimensionIndex < pos.Length; dimensionIndex++)
+						ILConst.PushOptimizedInt(pos[dimensionIndex], gen);
+
+					values[valueArrayPos++].emitPush(gen);
+					gen.il.Emit(OpCodes.Call, setMethodInfo);
+					gen.OutDebug("OpCodes.Call, {0}", setMethodInfo);
+
+					int incDimension = sizes.Length - 1;
+					pos[incDimension]++;
+					while(pos[incDimension] >= sizes[incDimension]) {
+						if(incDimension == 0) { 
+							hasNext = false;
+							break;
+						}
+
+						int nextIncDimension = incDimension - 1;
+						pos[incDimension] = 0;
+						pos[nextIncDimension]++;
+						incDimension = nextIncDimension;
+					}
+				}
+			}
+		}
+	}
 
 	public class ILArrayIndex : ILAssignable { 
 		public override Type Type { get => ownerExpression.Type.GetElementType(); } 
@@ -749,6 +855,18 @@ namespace InSharp {
 			} else { 
 				gen.il.Emit(OpCodes.Ldelem_Ref);
 				gen.OutDebug("OpCodes.Ldelem_Ref");
+			}
+		}
+
+		public override void emitPushAddress(ILGen gen) {
+			if(!Type.IsValueType) { 
+				emitPush(gen);
+			} else { 
+				ownerExpression.emitPush(gen);
+				indexExpression.emitPush(gen);
+
+				gen.il.Emit(OpCodes.Ldelema);
+				gen.OutDebug("OpCodes.Ldelema");
 			}
 		}
 	}
@@ -792,7 +910,7 @@ namespace InSharp {
 						}
 							
 						Type elementsType = parameterInfo.ParameterType.GetElementType();
-						int argsCount = passedArgs.Length - parameters.Length + 1; //Find count of params arguments
+						int argsCount = passedArgs.Length - parameters.Length + 1; //Find the count of params arguments
 						Expr[] arrayElements = new Expr[argsCount];
 						for(int argIndex = 0; argIndex < arrayElements.Length; argIndex++) {
 							arrayElements[argIndex] = passedArgs[index + argIndex].CompatiblePass(elementsType);
@@ -800,7 +918,7 @@ namespace InSharp {
 
 						this.args[index] = new ILCreateArray(elementsType, null/*arrayElements*/);
 					} else {
-						//Count of arguments isn't variable
+						//Count of arguments isn't a variable
 						args[index] = passedArgs[index].CompatiblePass(parameterInfo.ParameterType);
 					}
 				} else { 
@@ -874,8 +992,13 @@ namespace InSharp {
 						//Сохраняем результат во временную переменную
 						ILVar tempVar = ownerInstance.EmitSaveToTemp(gen);
 						tempVar.emitPushAddress(gen);
-					} else if(ownerInstance is ILVar) { //Если метод вызывается у переменной, добавляем на вершину стека её адрес
-						((ILVar)ownerInstance).emitPushAddress(gen);
+					} else if(ownerInstance is ILConst) {
+						Console.WriteLine("//CATCHED CONST!");
+						ILVar tempVar = ownerInstance.EmitSaveToTemp(gen);
+						tempVar.emitPushAddress(gen);
+					} else if(ownerInstance is ILAssignable) { //Если метод вызывается у переменной, добавляем на вершину стека её адрес
+						Console.WriteLine("//CATCHED ILAssignable!");
+						((ILAssignable)ownerInstance).emitPushAddress(gen);
 					}
 				} else { 
 					//Добавляем на вершину стека адрес владельца метода
@@ -887,7 +1010,7 @@ namespace InSharp {
 			emitPushArgs(gen);
 
 			//Вызов метода
-			if(ownerInstance.IsNull() || ownerInstance.Type.IsValueType) { 
+			if(ownerInstance.IsNull() || methodInfo.DeclaringType.IsValueType) { 
 				gen.il.Emit(OpCodes.Call, methodInfo);
 				gen.OutDebug("OpCodes.Call, {0}", methodInfo);
 			} else { 
@@ -967,13 +1090,16 @@ namespace InSharp {
 		}
 
 		public override void emitPush(ILGen gen) {
-			inputExpression.emitPush(gen);
 			
-			if(!MustBeCasted(inputExpression.Type, Type))
+			
+			if(!MustBeCasted(inputExpression.Type, Type)) {
+				inputExpression.emitPush(gen);
 				return;
+			}
 
 			//Boxing
 			if(Type == typeof(object)) { 
+				inputExpression.emitPush(gen);
 				gen.il.Emit(OpCodes.Box, inputExpression.Type);
 				gen.OutDebug("OpCodes.Box {0}", inputExpression.Type);
 				return;
@@ -982,19 +1108,37 @@ namespace InSharp {
 			//Cast to number
 			NativeTypeInfo castNumericType = NumericOps.GetMSILConvertionType(inputExpression.Type, Type);
 			if(castNumericType != null) {
+				inputExpression.emitPush(gen);
 				gen.il.Emit(castNumericType.ConvertionOpCode);
 				gen.OutDebug("Convert to {0} opcode", Type);
 				return;
 			}
-
+			
 			//Cast by user method
 			MethodInfo castMethod = ClassesOps.FindCastMethod(inputExpression.Type, Type);
-			if(castMethod != null) { 
-				gen.OutDebug("OpCodes.Call {0}", castMethod);
+			if(castMethod != null) {
+				Expr.CallStatic(castMethod, inputExpression).emitPush(gen);
 				return;
 			}
 
+			//Cast to string
+			if(Type == typeof(string)) { 
+				inputExpression.CallMethod("ToString").emitPush(gen);
+				return;
+			}
+			
+			//Unboxing
+			if(inputExpression.Type == typeof(object) && Type.IsValueType) { 
+				inputExpression.emitPush(gen);
+				gen.il.Emit(OpCodes.Unbox_Any, Type);
+				gen.OutDebug("OpCodes.Unbox_Any {0}", Type);
+				return;
+			}
+
+			
+
 			//Default classes cast
+			inputExpression.emitPush(gen);
 			gen.il.Emit(OpCodes.Castclass, Type);
 			gen.OutDebug("OpCodes.Castclass {0}", Type);
 		}
