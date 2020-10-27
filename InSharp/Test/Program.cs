@@ -75,6 +75,7 @@ namespace ILShellTester {
 			testFunc12();
 			testFunc13();
 			testFunc14();
+			TestTemplate.Test();
 			Console.ReadKey();
 		}
 

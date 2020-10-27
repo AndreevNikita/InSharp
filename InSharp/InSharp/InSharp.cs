@@ -511,22 +511,34 @@ namespace InSharp {
 		}
 
 		public override void emitPush(ILGen gen) {
-			ownerExpression.emitPush(gen);
-			gen.il.Emit(OpCodes.Ldfld, fieldInfo);
-			gen.OutDebug("OpCodes.Ldfld {0}", fieldInfo);
+			if(fieldInfo.IsStatic) { 
+				gen.il.Emit(OpCodes.Ldsfld, fieldInfo);
+				gen.OutDebug("OpCodes.Ldsfld {0}", fieldInfo);
+			} else {
+				ownerExpression.emitPush(gen);
+				gen.il.Emit(OpCodes.Ldfld, fieldInfo);
+				gen.OutDebug("OpCodes.Ldfld {0}", fieldInfo);
+			}
 		}
 
 		public override void emitPrepop(ILGen gen) { 
-			if(ownerExpression.Type.IsValueType) { 
-				((ILAssignable)ownerExpression).emitPushAddress(gen);
-			} else { 
-				ownerExpression.emitPush(gen);
+			if(!fieldInfo.IsStatic) { 
+				if(ownerExpression.Type.IsValueType) { 
+					((ILAssignable)ownerExpression).emitPushAddress(gen);
+				} else { 
+					ownerExpression.emitPush(gen);
+				}
 			}
 		}
 
 		public override void emitPop(ILGen gen) {
-			gen.il.Emit(OpCodes.Stfld, fieldInfo);
-			gen.OutDebug("OpCodes.Stfld, {0}", fieldInfo);
+			if(fieldInfo.IsStatic) { 
+				gen.il.Emit(OpCodes.Stsfld, fieldInfo);
+				gen.OutDebug("OpCodes.Stsfld, {0}", fieldInfo);
+			} else {
+				gen.il.Emit(OpCodes.Stfld, fieldInfo);
+				gen.OutDebug("OpCodes.Stfld, {0}", fieldInfo);
+			}
 		}
 		
 	}
@@ -960,6 +972,17 @@ namespace InSharp {
 		MethodInfo methodInfo;
 
 		public ILMethodCall(Expr ownerInstance, MethodInfo methodInfo, params Expr[] passedArgs) : base(methodInfo.GetParameters(), passedArgs) { 
+			if(ownerInstance == null) { 
+				if(!methodInfo.IsStatic)
+					throw new InSharpException($"Can't call method {methodInfo} without instalce");
+			} else { 
+				if(methodInfo.IsStatic)
+					throw new InSharpException($"Static method {methodInfo} must be called without instance. E.g. by \"Expr.CallStatic\"");
+			}
+
+			if(ownerInstance != null && !methodInfo.DeclaringType.IsAssignableFrom(ownerInstance.Type))
+				throw new InSharpException($"Can't call method {methodInfo} from type {ownerInstance.Type}");
+
 			this.ownerInstance = ownerInstance;
 			this.methodInfo = methodInfo;
 		}
@@ -1259,7 +1282,7 @@ namespace InSharp {
 
 		public void emit(ILGen gen) {
 			if(!gen.IsVoidOrNullReturnType) {
-				if(returnExpression.Type != gen.returnMethod.ReturnType)
+				if(!gen.returnMethod.ReturnType.IsAssignableFrom(returnExpression.Type))
 					throw new InSharpException("False return type");
 
 				returnExpression.emitPush(gen);
