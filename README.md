@@ -24,7 +24,7 @@ You can use ILTemplate for these tasks:
 
 #### Member setters
 * `CommonMemberSetter` - for static and instance class members set. Returns *Action<object, object>* where first argument - object instance (for instance fields) and the second - set value
-* `StaticMemberSetter` - for static members set. Result Action< object > is without object instance arg 
+* `StaticMemberSetter` - for static members set. Result *Action< object >* is without object instance arg 
 * `InstanceMemberSetter` for instance members set. Returns *Action<object, object>* where first argument - object instance and second - set value
 
 #### Class constructor
