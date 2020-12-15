@@ -7,10 +7,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using Test;
 
-namespace ILShellTester {
+namespace InSharpTester {
 
 	public class Vector { 
 		public double x, y;
@@ -60,6 +61,8 @@ namespace ILShellTester {
 	public class Program {
 
 		public static void Main(string[] args) { 
+
+
 			testFunc1();
 			testFunc2();
 			testFunc3();
@@ -75,6 +78,8 @@ namespace ILShellTester {
 			testFunc12();
 			testFunc13();
 			testFunc14();
+			testFunc15();
+			testFunc16();
 			TestTemplate.Test();
 			Console.ReadKey();
 		}
@@ -482,6 +487,30 @@ namespace ILShellTester {
 
 			var func =  gen.compile(true);
 			func();
+		}
+
+		public static void testGeneric<T>(T d) {
+			Console.WriteLine(d);
+		}
+
+		public static void testFunc15() { 
+			
+			var gen = new ILGen<Action>("TestFunc15", true);
+
+			gen.Line(Expr.CallStatic(typeof(Program).GetMethod("testGeneric", BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(typeof(int)), 12));
+
+			var func =  gen.compile(true);
+			func();
+		}
+
+		public static void testFunc16() { 
+
+			var gen = new ILGen<Func<Vector>>("TestFunc16", true);
+
+			gen.Return(Expr.CreateUninitialized(typeof(Vector)));
+
+			var func =  gen.compile(true);
+			Console.WriteLine("Uninitialized vector: {0}", func());
 		}
 		
 	}

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -90,10 +91,11 @@ namespace ShowCode {
 	class Program {
 		static void Main(string[] args) {
 			//CastTest.Test();
-
+			/*
 			foreach(FieldInfo fieldInfo in typeof(AClass).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) { 
 				Console.WriteLine("Field: {0}", fieldInfo.Name);
-			}
+			}*/
+			Console.WriteLine(func48().foo);
 			Console.ReadKey();
 		}
 
@@ -354,6 +356,18 @@ namespace ShowCode {
 				}
 				index1 = index1 + 1;
 			}
+		}
+
+		static void genericFunc47<T>(T obj) {
+			Console.WriteLine(obj);
+		}
+
+		static void func47() {
+			genericFunc47(88);
+		}
+
+		static AClass func48() {
+			return (AClass)FormatterServices.GetUninitializedObject(typeof(AClass));
 		}
 	}
 }

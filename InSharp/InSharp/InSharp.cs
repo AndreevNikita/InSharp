@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using static LowLevelOpsHelper.NumericOps;
 
 /*
@@ -26,6 +27,19 @@ namespace InSharp {
 
 	public interface IILEmitable {
 		void emit(ILGen gen);
+	}
+
+	
+	static class WorkConsts { 
+		
+		public static readonly MethodInfo FormatterServices_GetUninitializedObject_MethodInfo;
+		public static readonly MethodInfo Type_GetTypeFromHandle_MethodInfo;
+
+		static WorkConsts() { 
+			FormatterServices_GetUninitializedObject_MethodInfo = typeof(FormatterServices).GetMethod("GetUninitializedObject", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(Type) }, null);
+			Type_GetTypeFromHandle_MethodInfo = typeof(Type).GetMethod("GetTypeFromHandle", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof( System.RuntimeTypeHandle ) }, null);
+		}
+
 	}
 
 	public abstract class Expr {
@@ -74,6 +88,10 @@ namespace InSharp {
 
 		public static ILMethodCall CallStatic(MethodInfo methodInfo, params Expr[] args) {
 			return new ILMethodCall(null, methodInfo, args);
+		}
+
+		public static ILMethodCall CallStatic<CLASS_TYPE>(string methodName, params Expr[] args) { 
+			return CallStatic(typeof(CLASS_TYPE), methodName, args);
 		}
 
 		public static ILMethodCall CallStatic(Type classType, string methodName, params Expr[] args) {
@@ -182,6 +200,14 @@ namespace InSharp {
 			return new ILConst(value);
 		}
 
+		public Expr Cast<TARGET_TYPE>() { 
+			return CompatiblePass<TARGET_TYPE>();
+		}
+
+		public Expr Cast(Type targetType) { 
+			return CompatiblePass(targetType);
+		}
+
 		public Expr CompatiblePass(Type targetType) { 
 			if(ILCast.MustBeCasted(Type, targetType))
 				return new ILCast(this, targetType);
@@ -255,6 +281,14 @@ namespace InSharp {
 			return new ILSetExpression(target, value.CompatiblePass(target.Type));
 		}
 
+		//Get uninitialized object
+		
+		
+
+		public static Expr CreateUninitialized(Type type) { 
+			return Expr.CallStatic(WorkConsts.FormatterServices_GetUninitializedObject_MethodInfo, Expr.Const(type)).Cast(type);
+		}
+
 		//Constructors
 		public static Expr NewObject(ConstructorInfo constructor, params Expr[] args) { 
 			return CallConstructor(constructor, args);
@@ -262,6 +296,10 @@ namespace InSharp {
 
 		public static Expr CallConstructor(ConstructorInfo constructor, params Expr[] args) { 
 			return new ILConstructorCall(constructor, args);
+		}
+
+		public static Expr NewObject<TYPE>(params Expr[] args) { 
+			return NewObject(typeof(TYPE), args);
 		}
 
 		public static Expr NewObject(Type classType, params Expr[] args) { 
@@ -700,6 +738,13 @@ namespace InSharp {
 			} else if(Type == typeof(string)) { 
 				gen.il.Emit(OpCodes.Ldstr, Convert.ToString(value));
 				gen.OutDebug("OpCodes.Ldstr, \"{0}\"", value);
+			} else if(typeof(Type).IsAssignableFrom(Type)) { 
+				gen.il.Emit(OpCodes.Ldtoken, (Type)value);
+				gen.OutDebug("OpCodes.Ldtoken, \"{0}\"", value);
+				gen.il.Emit(OpCodes.Call, WorkConsts.Type_GetTypeFromHandle_MethodInfo);
+				gen.OutDebug("OpCodes.Call, \"{0}\"", WorkConsts.Type_GetTypeFromHandle_MethodInfo);
+			} else {
+				throw new InSharpException($"Invalid type of const ({Type})");
 			}
 		}
 
