@@ -143,3 +143,26 @@ gen.EndWhile();
 
 var func =  gen.compile(true);
 ```
+
+## Example 6
+Create delegate instance and call it
+```c#
+delegate int TestDelegate(int a, int b);
+
+public static int testAddition(int a, int b) {
+	Console.WriteLine($"Call testAddition with args a = {a}, b = {b}");
+	return a + b;
+}
+
+public static void testFunc17() { 
+	var gen = new ILGen<Func<int, int, int>>("TestFunc17", true);
+	ILVar delegateVar = gen.DeclareVar(typeof(TestDelegate));
+
+	gen.Line(delegateVar.Set(Expr.CreateDelegate(typeof(TestDelegate), Expr.NULL, typeof(Program).GetMethod("testAddition", BindingFlags.Public | BindingFlags.Static))));
+	gen.Return(delegateVar.Invoke(gen.args[0], gen.args[1]));
+
+	var func = gen.compile(true);
+	int result = func(5, 6);
+	Console.WriteLine($"Result: {result}");
+}
+```
