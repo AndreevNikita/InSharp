@@ -95,7 +95,8 @@ namespace ShowCode {
 			foreach(FieldInfo fieldInfo in typeof(AClass).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) { 
 				Console.WriteLine("Field: {0}", fieldInfo.Name);
 			}*/
-			Console.WriteLine(func48().foo);
+			foreach(ConstructorInfo constructor in typeof(D).GetConstructors())
+				Console.WriteLine($"Constructor: {constructor}");
 			Console.ReadKey();
 		}
 
@@ -368,6 +369,16 @@ namespace ShowCode {
 
 		static AClass func48() {
 			return (AClass)FormatterServices.GetUninitializedObject(typeof(AClass));
+		}
+
+		static object func49_func(int a, object b) { 
+			return null;
+		}
+
+		delegate object D(int a, object b);
+		static void func49() { 
+			D myDelegate = new D(func49_func);
+			object result = myDelegate(5, 25);
 		}
 	}
 }

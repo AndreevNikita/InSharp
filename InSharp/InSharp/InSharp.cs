@@ -102,6 +102,15 @@ namespace InSharp {
 			return CallStatic(methodInfo, args);
 		}
 
+		/*--------------------------------Delegate--------------------------------*/
+		public static Expr CreateDelegate(Type type, Expr owner, Expr methodInfoExpr) { 
+			return CallConstructor(type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(object), typeof(IntPtr)}, null), owner, methodInfoExpr);
+		}
+
+		public ILMethodCall Invoke(params Expr[] args) { 
+			return CallMethod("Invoke", args);
+		}
+
 		/*--------------------------------Field--------------------------------*/
 
 		public ILField Field(FieldInfo fieldInfo) { 
@@ -195,6 +204,7 @@ namespace InSharp {
 		public static implicit operator Expr(double value) { return Const(value); }
 
 		public static implicit operator Expr(string value) { return Const(value); }
+		public static implicit operator Expr(MethodInfo value) { return Const(value); }
 
 		public static ILConst Const(object value) { 
 			return new ILConst(value);
@@ -317,7 +327,7 @@ namespace InSharp {
 				return expression.Type; 
 			}).ToArray(), null);
 
-			Console.WriteLine("CTorInfo: {0}", constructorInfo);
+			//Console.WriteLine("CTorInfo: {0}", constructorInfo);
 
 			if(constructorInfo == null) { 
 				if(args.Length != 0)
@@ -743,6 +753,9 @@ namespace InSharp {
 				gen.OutDebug("OpCodes.Ldtoken, \"{0}\"", value);
 				gen.il.Emit(OpCodes.Call, WorkConsts.Type_GetTypeFromHandle_MethodInfo);
 				gen.OutDebug("OpCodes.Call, \"{0}\"", WorkConsts.Type_GetTypeFromHandle_MethodInfo);
+			} else if(typeof(MethodInfo).IsAssignableFrom(Type)) {
+				gen.il.Emit(OpCodes.Ldftn, (MethodInfo)value);
+				gen.OutDebug("OpCodes.Ldftn, \"{0}\"", value);
 			} else {
 				throw new InSharpException($"Invalid type of const ({Type})");
 			}
@@ -956,6 +969,18 @@ namespace InSharp {
 
 		public ILArgsExpression(ParameterInfo[] parameters, Expr[] passedArgs) { 
 			this.args = new Expr[parameters.Length];
+			/*
+			Console.WriteLine($"//ILArgsExpression: is delegate: {this is ILConstructorCall}");
+			if(this is ILConstructorCall && typeof(Delegate).IsAssignableFrom(Type)) { 
+				if(parameters.Length != 2 || passedArgs.Length != 2) { 
+					throw new InSharpException("Delegate constructor's args count must be 2");
+				}
+
+				this.args[0] = passedArgs[0].CompatiblePass(parameters[0].ParameterType);
+				this.args[1] = passedArgs[1];
+				return;
+			}
+			*/
 
 			for(int index = 0; index < parameters.Length; index++) {
 				ParameterInfo parameterInfo = parameters[index];
@@ -1215,6 +1240,10 @@ namespace InSharp {
 			//Boxing
 			if(inputType.IsValueType && targetType == typeof(object))
 				return true;
+
+			//MethodInfo -> IntPtr
+			if(typeof(MethodInfo).IsAssignableFrom(inputType) && targetType == typeof(IntPtr))
+				return false;
 
 			if(targetType.IsAssignableFrom(inputType))
 				return false;
