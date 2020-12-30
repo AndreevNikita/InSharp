@@ -81,7 +81,7 @@ namespace InSharpTester {
 			testFunc15();
 			testFunc16();
 			testFunc17();
-			//TestTemplate.Test();
+			TestTemplate.Test();
 			Console.ReadKey();
 		}
 

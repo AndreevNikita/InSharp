@@ -210,6 +210,16 @@ namespace InSharp {
 			return new ILConst(value);
 		}
 
+		
+
+		public static Expr Cast(Expr expr, Type targetType) { 
+			return expr.Cast(targetType);
+		}
+
+		public static Expr Cast<TARGET_TYPE>(Expr expr) { 
+			return expr.Cast<TARGET_TYPE>();
+		}
+
 		public Expr Cast<TARGET_TYPE>() { 
 			return CompatiblePass<TARGET_TYPE>();
 		}
