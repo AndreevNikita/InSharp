@@ -111,6 +111,10 @@ namespace InSharp {
 			return CallMethod("Invoke", args);
 		}
 
+		public ILMethodCall Equals(Expr other) { 
+			return CallMethod("Equals", other);
+		}
+
 		/*--------------------------------Field--------------------------------*/
 
 		public ILField Field(FieldInfo fieldInfo) { 

@@ -96,15 +96,20 @@ namespace InSharp {
 
 		public override Type Type { get; }
 
-		public ILRelationBinaryOp(Expr operand1, Expr operand2, Action<Expr, Expr, ILGen> opAction) {
+		public ILRelationBinaryOp(Expr operand1, Expr operand2, Action<Expr, Expr, ILGen> opAction, bool withoutCheck = false) {
 			this.opAction = opAction;
-			NativeTypeInfo commonType = NumericOps.GetBitwiseOpResultType(operand1.Type, operand2.Type);
-			if(commonType == null)
-				throw new InSharpException("Not available ariphmetical operands \"{0}\" & \"{1}\"", operand1, operand2);
-			Type = typeof(bool);
-
-			this.operand1 = operand1.CompatiblePass(commonType.Type);
-			this.operand2 = operand2.CompatiblePass(commonType.Type);
+			if(withoutCheck) {
+				this.operand1 = operand1;
+				this.operand2 = operand2;
+			} else { 
+				NativeTypeInfo commonType = NumericOps.GetBitwiseOpResultType(operand1.Type, operand2.Type);
+				if(commonType == null)
+					throw new InSharpException("Not available ariphmetical operands \"{0}\" & \"{1}\"", operand1, operand2);
+				
+				this.operand1 = operand1.CompatiblePass(commonType.Type);
+				this.operand2 = operand2.CompatiblePass(commonType.Type);
+			}
+			this.Type = typeof(bool);
 		}
 
 		public override void emitPush(ILGen gen) { 
@@ -215,7 +220,7 @@ namespace InSharp {
 
 
 		/*--------------------------------Relation--------------------------------*/
-		private static Expr EqualOperationFactory(Expr op1, Expr op2) { return new ILRelationBinaryOp(op1, op2, OperationEqual); }
+		private static Expr EqualOperationFactory(Expr op1, Expr op2) { return new ILRelationBinaryOp(op1, op2, OperationEqual, true); }
 		private static void OperationEqual(Expr operand1, Expr operand2, ILGen gen) { 
 			operand1.emitPush(gen);
 			operand2.emitPush(gen);
@@ -239,7 +244,7 @@ namespace InSharp {
 			gen.OutDebug("OpCodes.Cgt");
 		}
 
-		private static Expr NotEqualOperationFactory(Expr op1, Expr op2) { return new ILRelationBinaryOp(op1, op2, OperationNotEqual); }
+		private static Expr NotEqualOperationFactory(Expr op1, Expr op2) { return new ILRelationBinaryOp(op1, op2, OperationNotEqual, true); }
 		private static void OperationNotEqual(Expr operand1, Expr operand2, ILGen gen) { 
 			operand1.emitPush(gen);
 			operand2.emitPush(gen);

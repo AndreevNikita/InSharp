@@ -380,5 +380,13 @@ namespace ShowCode {
 			D myDelegate = new D(func49_func);
 			object result = myDelegate(5, 25);
 		}
+
+		static bool func50(object obj1, object obj2) {
+			return obj1 == obj2;
+		}
+
+		static bool func51(int a, short b) { 
+			return a == b;
+		}
 	}
 }
