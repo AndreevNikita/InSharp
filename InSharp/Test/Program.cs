@@ -545,6 +545,7 @@ namespace InSharpTester {
 			Console.WriteLine($"Result: {func(5, 5)}");
 			object o = new object();
 			Console.WriteLine($"Result: {func(o, o)}");
+
 		}
 	}
 
