@@ -612,17 +612,18 @@ namespace InSharpTester {
 
 		//Return fix
 		public static void testFunc22() { 
-			var gen = new ILGen<Func<int, int>>("TestFunc22", true);
+			var gen = new ILGen<Func<object, int>>("TestFunc22", true);
 			ILVar delegateVar = gen.DeclareVar(typeof(TestDelegate));
 
-			gen.If(Expr.Equals(gen.args[0], 1));
+			gen.If(Expr.Equals(gen.args[0], Expr.NULL));
 				gen.Return(Expr.Const(0));
 			gen.EndIf();
+
 			gen.Return(Expr.Const(1));
 
 			var func = gen.compile(true);
-			Console.WriteLine($"Result: {func(0)}");
-			Console.WriteLine($"Result: {func(1)}");
+			Console.WriteLine($"Result: {func(new object())}");
+			Console.WriteLine($"Result: {func(null)}");
 
 		}
 	}

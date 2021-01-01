@@ -1377,8 +1377,8 @@ namespace InSharp {
 				gen.ReturnVar.emitPop(gen);
 
 			}
-			gen.il.Emit(OpCodes.Br_S, gen.ReturnLabel);
-			gen.OutDebug("OpCodes.Br_S, gen.ReturnLabel");
+			gen.il.Emit(OpCodes.Br, gen.ReturnLabel);
+			gen.OutDebug("OpCodes.Br, gen.ReturnLabel");
 		}
 	}
 
@@ -1453,7 +1453,7 @@ namespace InSharp {
 			il.MarkLabel(label);
 
 			if(labelName != null)
-				OutComment("{0}:", labelName);
+				OutComment($"({il.ILOffset}) {labelName}:");
 		}
 
 		public ILVar GetTemporaryVariable(Type type) { 

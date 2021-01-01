@@ -388,5 +388,116 @@ namespace ShowCode {
 		static bool func51(int a, short b) { 
 			return a == b;
 		}
+
+		static int func52(object a) {
+			if(a == null)
+				return 0;
+
+			int i1 = 3;
+			int i2 = 4;
+			int i3 = 5;
+			int buffer;
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			buffer = i3;
+			i3 = i2;
+			i2 = i1;
+			i1 = buffer;
+
+			return i1;
+		}
 	}
 }
