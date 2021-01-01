@@ -1635,14 +1635,25 @@ namespace InSharp {
 
 		internal class IfConstruction : ICodeConstruction {
 
+			class IfPartBlock { 
+				public Expr Expression { get; set; }
+				public Label ElseLabel { get; set; }
+
+				public IfPartBlock(Expr expression, Label label) {
+					this.Expression = expression;
+					this.ElseLabel = label;
+				}
+			}
+
+
 			Label afterLabel;
 
-			List<(Expr expression, Label elseLabel)?> expressions = new List<(Expr expression, Label elseLabel)?>();
+			List<IfPartBlock> expressions = new List<IfPartBlock>();
 			private bool IsLogicalEnded { get => expressions.Last() == null; }
 
 			public IfConstruction(ILGen gen, Expr ifExpression) { 
 				afterLabel = gen.DefineLabel();
-				expressions.Add((ifExpression, gen.DefineLabel()));
+				expressions.Add(new IfPartBlock(ifExpression, afterLabel));
 			}
 
 			public void ElseIfStatement(ILGen gen, Expr ifExpression) {
@@ -1650,20 +1661,21 @@ namespace InSharp {
 					throw new InSharpException("Can't put something after \"Else\"");
 
 				ifExpression.assetNullType("Can't put \"ElseIf\" without expression");
-
-				expressions.Add((ifExpression, gen.DefineLabel()));
+				expressions.Last().ElseLabel = gen.DefineLabel();
+				expressions.Add(new IfPartBlock(ifExpression, afterLabel));
 			}
 
-			public void ElseStatement() { 
+			public void ElseStatement(ILGen gen) { 
 				if(IsLogicalEnded)
 					throw new InSharpException("Can't put something after \"Else\"");
 
+				expressions.Last().ElseLabel = gen.DefineLabel();
 				expressions.Add(null);
 			}
 			int currentEmitIndex = 0;
 
 			public void emit(ILGen gen) {
-				//End construction
+				//EndIf
 				if(currentEmitIndex == expressions.Count) { 
 					gen.MarkLabel(afterLabel, "AfterLabel");
 					return;
@@ -1671,24 +1683,27 @@ namespace InSharp {
 
 				var currentExpression = expressions[currentEmitIndex];
 
-				if(currentEmitIndex == 0) { //First expression
-					currentExpression.Value.expression.emitPush(gen);
-					gen.il.Emit(OpCodes.Brfalse, currentExpression.Value.elseLabel);
+				if(currentEmitIndex == 0) { 
+					//If block
+					currentExpression.Expression.emitPush(gen);
+					gen.il.Emit(OpCodes.Brfalse, currentExpression.ElseLabel);
 					gen.OutDebug("OpCodes.Brfalse ElseLabel" );
 				} else { 
 					var lastExpression = expressions[currentEmitIndex - 1];
 					if(currentExpression != null) {
+						//Else if block
 						gen.il.Emit(OpCodes.Br, afterLabel); 
 						gen.OutDebug("OpCodes.Br AfterLabel");
-						gen.MarkLabel(lastExpression.Value.elseLabel, "ElseLabel");
+						gen.MarkLabel(lastExpression.ElseLabel, "ElseLabel");
 
-						currentExpression.Value.expression.emitPush(gen);
-						gen.il.Emit(OpCodes.Brfalse, currentExpression.Value.elseLabel);
+						currentExpression.Expression.emitPush(gen);
+						gen.il.Emit(OpCodes.Brfalse, currentExpression.ElseLabel);
 						gen.OutDebug("OpCodes.Brfalse ElseLabel");
 					} else { 
+						//Else block
 						gen.il.Emit(OpCodes.Br, afterLabel); 
 						gen.OutDebug("OpCodes.Br After_label");
-						gen.MarkLabel(lastExpression.Value.elseLabel, "ElseLabel");
+						gen.MarkLabel(lastExpression.ElseLabel, "ElseLabel");
 					}
 				}
 
@@ -1713,7 +1728,7 @@ namespace InSharp {
 
 		public static void Else(this ILGen gen) {
 			IfConstruction ifConstruction = gen.GetCurrentCodeConstruction<IfConstruction>();
-			ifConstruction.ElseStatement();
+			ifConstruction.ElseStatement(gen);
 
 			gen.Line(ifConstruction);
 		}
@@ -1763,6 +1778,8 @@ namespace InSharp {
 			gen.Line(gen.End<WhileConstruction>());
 		}
 	}
+
+	
 
 	public static class ArraysExtensions { 
 		public static void SetArrayValues(this ILGen gen, ILAssignable arrayAssignable, int[] sizes, params Expr[] values) {

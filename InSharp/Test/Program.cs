@@ -69,6 +69,7 @@ namespace InSharpTester {
 			testFunc4();
 			testFunc5_1();
 			testFunc5_2();
+			testFunc5_3();
 			testFunc6();
 			testFunc7();
 			testFunc8();
@@ -82,6 +83,7 @@ namespace InSharpTester {
 			testFunc16();
 			testFunc17();
 			testFunc18();
+			testFunc19();
 			//TestTemplate.Test();
 			Console.ReadKey();
 		}
@@ -185,6 +187,23 @@ namespace InSharpTester {
 				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "{0} is negative", Expr.CreateArray(typeof(object), gen.args[0])));
 			gen.Else();
 			//else (arg0 == 0)
+				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "Zero"));
+			gen.EndIf();
+
+
+			var func = gen.compile(true);
+			func(15);
+			func(3);
+			func(0);
+			func(-90);
+		}
+
+		//Overloaded operators
+		static void testFunc5_3() {
+			var gen = new ILGen<Action<int>>("TestFunc5_3", true);
+
+			//Function
+			gen.If(Expr.Equals(gen.args[0], 0));
 				gen.Line(Expr.CallStatic(typeof(Console), "WriteLine", "Zero"));
 			gen.EndIf();
 
@@ -545,6 +564,19 @@ namespace InSharpTester {
 			Console.WriteLine($"Result: {func(5, 5)}");
 			object o = new object();
 			Console.WriteLine($"Result: {func(o, o)}");
+
+		}
+
+		public static void testFunc19() { 
+			var gen = new ILGen<Func<object, bool>>("TestFunc19", true);
+			ILVar delegateVar = gen.DeclareVar(typeof(TestDelegate));
+
+
+			gen.Return(Expr.Equals(gen.args[0], Expr.NULL));
+
+			var func = gen.compile(true);
+			object o = new object();
+			Console.WriteLine($"Result: {func(o)}");
 
 		}
 	}
