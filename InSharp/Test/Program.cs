@@ -85,6 +85,8 @@ namespace InSharpTester {
 			testFunc18();
 			testFunc19();
 			testFunc20();
+			testFunc21();
+			testFunc22();
 			//TestTemplate.Test();
 			Console.ReadKey();
 		}
@@ -592,6 +594,35 @@ namespace InSharpTester {
 
 			var func = gen.compile(true);
 			Console.WriteLine($"Result: {func()}");
+
+		}
+
+		//Other integers types consts fix
+		public static void testFunc21() { 
+			var gen = new ILGen<Func<int>>("TestFunc21", true);
+			ILVar delegateVar = gen.DeclareVar(typeof(TestDelegate));
+
+
+			gen.Return(Expr.Const((byte)20));
+
+			var func = gen.compile(true);
+			Console.WriteLine($"Result: {func()}");
+
+		}
+
+		//Return fix
+		public static void testFunc22() { 
+			var gen = new ILGen<Func<int, int>>("TestFunc22", true);
+			ILVar delegateVar = gen.DeclareVar(typeof(TestDelegate));
+
+			gen.If(Expr.Equals(gen.args[0], 1));
+				gen.Return(Expr.Const(0));
+			gen.EndIf();
+			gen.Return(Expr.Const(1));
+
+			var func = gen.compile(true);
+			Console.WriteLine($"Result: {func(0)}");
+			Console.WriteLine($"Result: {func(1)}");
 
 		}
 	}
