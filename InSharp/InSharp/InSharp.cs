@@ -1619,7 +1619,7 @@ namespace InSharp {
 			}
 
 			//Return end
-			MarkLabel(ReturnLabel);
+			MarkLabel(ReturnLabel, "ReturnLabel");
 			if(!IsVoidOrNullReturnType) { 
 				ReturnVar.emitPush(this);
 			}
