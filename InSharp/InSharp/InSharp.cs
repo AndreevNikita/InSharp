@@ -800,7 +800,7 @@ namespace InSharp {
 		}
 
 		public static void PushOptimizedInt(object value, ILGen gen) {
-			OpCode? optimizedOpCode = GetOptimizeIntOpcode((int)value);
+			OpCode? optimizedOpCode = GetOptimizeIntOpcode(Convert.ToInt32(value));
 			if(optimizedOpCode != null) { 
 				gen.il.Emit(optimizedOpCode.Value);
 				gen.OutDebug("OpCodes.Ldc_I4_{0}", value);

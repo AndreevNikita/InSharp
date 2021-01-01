@@ -84,6 +84,7 @@ namespace InSharpTester {
 			testFunc17();
 			testFunc18();
 			testFunc19();
+			testFunc20();
 			//TestTemplate.Test();
 			Console.ReadKey();
 		}
@@ -567,6 +568,7 @@ namespace InSharpTester {
 
 		}
 
+		//NULL compare fix
 		public static void testFunc19() { 
 			var gen = new ILGen<Func<object, bool>>("TestFunc19", true);
 			ILVar delegateVar = gen.DeclareVar(typeof(TestDelegate));
@@ -577,6 +579,19 @@ namespace InSharpTester {
 			var func = gen.compile(true);
 			object o = new object();
 			Console.WriteLine($"Result: {func(o)}");
+
+		}
+
+		//Other integers types consts fix
+		public static void testFunc20() { 
+			var gen = new ILGen<Func<int>>("TestFunc20", true);
+			ILVar delegateVar = gen.DeclareVar(typeof(TestDelegate));
+
+
+			gen.Return(Expr.Const((byte)20));
+
+			var func = gen.compile(true);
+			Console.WriteLine($"Result: {func()}");
 
 		}
 	}
