@@ -306,8 +306,6 @@ namespace InSharp {
 		}
 
 		//Get uninitialized object
-		
-		
 
 		public static Expr CreateUninitialized(Type type) { 
 			return Expr.CallStatic(WorkConsts.FormatterServices_GetUninitializedObject_MethodInfo, Expr.Const(type)).Cast(type);
@@ -712,8 +710,6 @@ namespace InSharp {
 		public ILSetExpression(ILAssignable target, Expr valueExpression) { 
 			this.target = target;
 			this.valueExpression = valueExpression.CompatiblePass(target.Type);
-			if(this.valueExpression is ILConstructorCall)
-				((ILConstructorCall)this.valueExpression).Owner = target;
 		}
 
 		public void emit(ILGen gen) {
@@ -1146,39 +1142,36 @@ namespace InSharp {
 		ConstructorInfo constructorInfo;
 		public bool IsDefaultConstructor { get => constructorInfo == null; }
 
-		public ILAssignable Owner { get; set; }
-
 		public ILConstructorCall(ConstructorInfo constructorInfo, Expr[] passedArgs) : base(constructorInfo.GetParameters(), passedArgs) { 
 			this.constructorInfo = constructorInfo;
 			this.Type = constructorInfo.DeclaringType;
 		}
 
-		public ILConstructorCall(Type type, ILAssignable owner = null) : base() { 
+		public ILConstructorCall(Type type) : base() { 
 			this.constructorInfo = null;
 			this.Type = type;
-			this.Owner = owner;
 		}
 
 
 		protected override void emitCall(ILGen gen, bool withResult) {
+			ILVar tempVAR = null;
+
 			gen.OutComment($"//Call constructor {Type}; {Type.IsValueType}");
 
 			if(IsDefaultConstructor) { 
-				if(Owner == null)
-					Owner = AllocTemp(gen);
-				Owner.emitPushAddress(gen);
+				tempVAR = AllocTemp(gen);
+				tempVAR.emitPushAddress(gen);
 				gen.il.Emit(OpCodes.Initobj, Type);
 				gen.OutDebug("OpCodes.Initobj {0}", Type);
 				if(withResult)
-					Owner.emitPush(gen);
+					tempVAR.emitPush(gen);
 				return;
 			}
 
 			
 			if(Type.IsValueType) { 
-				if(Owner == null)
-					Owner = AllocTemp(gen);
-				Owner.emitPushAddress(gen);
+				tempVAR = AllocTemp(gen);
+				tempVAR.emitPushAddress(gen);
 			}
 
 			emitPushArgs(gen);
@@ -1186,17 +1179,18 @@ namespace InSharp {
 			if(!Type.IsValueType) {
 				gen.il.Emit(OpCodes.Newobj, constructorInfo);
 				gen.OutDebug("OpCodes.NewObj {0}", constructorInfo);
+				if(!withResult) { 
+					gen.Pop();
+				}
 			} else {
 				gen.il.Emit(OpCodes.Call, constructorInfo);
 				gen.OutDebug("OpCodes.Call {0}", constructorInfo);
 				if(withResult) { 
-					Owner.emitPush(gen);
+					tempVAR.emitPush(gen);
 				}
 			}
 
-			if(!withResult) { 
-				gen.Pop();
-			}
+			
 		}
 	}
 
