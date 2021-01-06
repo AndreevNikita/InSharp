@@ -88,6 +88,19 @@ namespace ShowCode {
 		public void bar() { }
 	}
 
+	public struct StructVector {
+		public double x, y;
+
+		public StructVector(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public override string ToString() {
+			return $"{x}; {y}";
+		}
+	}
+
 	class Program {
 		static void Main(string[] args) {
 			//CastTest.Test();
@@ -498,6 +511,32 @@ namespace ShowCode {
 			i1 = buffer;
 
 			return i1;
+		}
+
+		static void func53_func(ref int i) { 
+		}
+
+		static void func53() { 
+			int i = 3;
+			func53_func(ref i);
+		}
+
+		static void func54_func(ref object i) { 
+		}
+
+		static void func54() { 
+			object o = new object();
+			func54_func(ref o);
+		}
+
+		static double func55(StructVector vec1) { 
+			StructVector v = new StructVector(vec1.x + vec1.y, vec1.x * vec1.y);
+			return v.x + v.y;
+		}
+
+		static int func56((int a, int b) t1) { 
+			(int c, int d) t2 = (t1.a + t1.b, t1.a * t1.b);
+			return t2.c + t2.d;
 		}
 	}
 }

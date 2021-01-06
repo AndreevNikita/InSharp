@@ -712,6 +712,8 @@ namespace InSharp {
 		public ILSetExpression(ILAssignable target, Expr valueExpression) { 
 			this.target = target;
 			this.valueExpression = valueExpression.CompatiblePass(target.Type);
+			if(this.valueExpression is ILConstructorCall)
+				((ILConstructorCall)this.valueExpression).Owner = target;
 		}
 
 		public void emit(ILGen gen) {
@@ -1144,28 +1146,39 @@ namespace InSharp {
 		ConstructorInfo constructorInfo;
 		public bool IsDefaultConstructor { get => constructorInfo == null; }
 
+		public ILAssignable Owner { get; set; }
+
 		public ILConstructorCall(ConstructorInfo constructorInfo, Expr[] passedArgs) : base(constructorInfo.GetParameters(), passedArgs) { 
 			this.constructorInfo = constructorInfo;
 			this.Type = constructorInfo.DeclaringType;
 		}
 
-		public ILConstructorCall(Type type) : base() { 
+		public ILConstructorCall(Type type, ILAssignable owner = null) : base() { 
 			this.constructorInfo = null;
 			this.Type = type;
+			this.Owner = owner;
 		}
 
 
 		protected override void emitCall(ILGen gen, bool withResult) {
-			gen.OutComment("//Call constructor");
+			gen.OutComment($"//Call constructor {Type}; {Type.IsValueType}");
 
 			if(IsDefaultConstructor) { 
-				ILVar tempVAR = AllocTemp(gen);
-				tempVAR.emitPushAddress(gen);
+				if(Owner == null)
+					Owner = AllocTemp(gen);
+				Owner.emitPushAddress(gen);
 				gen.il.Emit(OpCodes.Initobj, Type);
 				gen.OutDebug("OpCodes.Initobj {0}", Type);
 				if(withResult)
-					tempVAR.emitPush(gen);
+					Owner.emitPush(gen);
 				return;
+			}
+
+			
+			if(Type.IsValueType) { 
+				if(Owner == null)
+					Owner = AllocTemp(gen);
+				Owner.emitPushAddress(gen);
 			}
 
 			emitPushArgs(gen);
@@ -1176,6 +1189,9 @@ namespace InSharp {
 			} else {
 				gen.il.Emit(OpCodes.Call, constructorInfo);
 				gen.OutDebug("OpCodes.Call {0}", constructorInfo);
+				if(withResult) { 
+					Owner.emitPush(gen);
+				}
 			}
 
 			if(!withResult) { 

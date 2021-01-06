@@ -57,6 +57,18 @@ namespace InSharpTester {
 		}
 	}
 
+	public struct StructVector {
+		public double x, y;
+
+		public StructVector(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public override string ToString() {
+			return $"{x}; {y}";
+		}
+	}
 
 	public class Program {
 
@@ -87,6 +99,8 @@ namespace InSharpTester {
 			testFunc20();
 			testFunc21();
 			testFunc22();
+			testFunc23();
+			testFunc24();
 			//TestTemplate.Test();
 			Console.ReadKey();
 		}
@@ -625,6 +639,32 @@ namespace InSharpTester {
 			Console.WriteLine($"Result: {func(new object())}");
 			Console.WriteLine($"Result: {func(null)}");
 
+		}
+
+		public static void testFunc23() {
+			var gen = new ILGen<Func<StructVector, double>>("TestFunc23", true);
+			ILVar testStructVector = gen.DeclareVar<StructVector>();
+			
+			gen.Line(testStructVector.Set(Expr.NewObject<StructVector>(Expr.Add(gen.args[0].Field("x"), gen.args[0].Field("y")), Expr.Mul(gen.args[0].Field("x"), gen.args[0].Field("y")))));
+
+			gen.Return(Expr.Add(testStructVector.Field("x"), testStructVector.Field("y")));
+
+			var func = gen.compile(true);
+			//4 + 5 = 9; 4 * 5 = 20; 9 + 20 = 29
+			Console.WriteLine($"Result: {func(new StructVector(4, 5))}");
+		}
+
+		public static void testFunc24() {
+			var gen = new ILGen<Func<(double, double), double>>("TestFunc24", true);
+			ILVar testTuple = gen.DeclareVar<(double, double)>();
+			
+			gen.Line(testTuple.Set(Expr.NewObject<(double, double)>(Expr.Add(gen.args[0].Field("Item1"), gen.args[0].Field("Item2")), Expr.Mul(gen.args[0].Field("Item1"), gen.args[0].Field("Item2")))));
+
+			gen.Return(Expr.Add(testTuple.Field("Item1"), testTuple.Field("Item2")));
+
+			var func = gen.compile(true);
+			//4 + 5 = 9; 4 * 5 = 20; 9 + 20 = 29
+			Console.WriteLine($"Result: {func((4, 5))}");
 		}
 	}
 
