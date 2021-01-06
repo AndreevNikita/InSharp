@@ -10,7 +10,7 @@ Library for runtime MSIL functions compilation
 	    * To set value use *Set* method (Example: `gen.Line(i.Set(0));`) **!Set is the statement and must be in gen.Line**
 	* `gen.Return` to return value
 	* `gen.If` / `gen.ElseIf` / `gen.Else` / `gen.EndIf` for if construction
-	* `gen.While` / `gen.EndWhile` for while cicles
+	* `gen.While` / `gen.EndWhile` for while cycles
 
 0. Call `gen.compile([enable debug info]);` to compile your function
 
