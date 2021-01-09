@@ -166,3 +166,7 @@ public static void testFunc17() {
 	Console.WriteLine($"Result: {result}");
 }
 ```
+
+
+## Also
+To see MSIL code, I used [ILSpy](https://github.com/icsharpcode/ILSpy). Codes to view MSIL are in [ShowCode](https://github.com/AndreevNikita/InSharp/tree/master/InSharp/InSharp)
