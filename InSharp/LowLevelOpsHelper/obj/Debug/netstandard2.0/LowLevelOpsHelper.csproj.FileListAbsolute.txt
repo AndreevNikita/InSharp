@@ -1,0 +1,9 @@
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\bin\Debug\netstandard2.0\LowLevelOpsHelper.deps.json
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\bin\Debug\netstandard2.0\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\bin\Debug\netstandard2.0\LowLevelOpsHelper.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\obj\Debug\netstandard2.0\LowLevelOpsHelper.csprojAssemblyReference.cache
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\obj\Debug\netstandard2.0\LowLevelOpsHelper.AssemblyInfoInputs.cache
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\obj\Debug\netstandard2.0\LowLevelOpsHelper.AssemblyInfo.cs
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\obj\Debug\netstandard2.0\LowLevelOpsHelper.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\obj\Debug\netstandard2.0\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\LowLevelOpsHelper\obj\Debug\netstandard2.0\LowLevelOpsHelper.pdb

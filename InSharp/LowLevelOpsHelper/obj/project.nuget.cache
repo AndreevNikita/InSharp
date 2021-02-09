@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "VtTFPvWuq/4h9i4IENjoUAp4rpVg7ThZJV1qerbcgv2GWkhcIBnacxSBLKuk0O3/0/3tawDSSLqf13V/QpVOOg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Nick\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Nick\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "pEJzDE8bwWVbT2BzIONKiVz9bVECcQYcqCRt//rg60A496e4Txkb6NOpEJJ1geyfFx6ZK0MWjYRdBwS1x2n6vg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\InSharp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Nick\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Nick\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\Nick\\.nuget\\packages\\system.reflection.emit.ilgeneration\\4.7.0\\system.reflection.emit.ilgeneration.4.7.0.nupkg.sha512",
+    "C:\\Users\\Nick\\.nuget\\packages\\system.reflection.emit.lightweight\\4.7.0\\system.reflection.emit.lightweight.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}
