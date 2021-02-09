@@ -166,7 +166,9 @@ public static void testFunc17() {
 	Console.WriteLine($"Result: {result}");
 }
 ```
-
-
+## More examples  
+[IL compile](https://github.com/AndreevNikita/InSharp/blob/master/InSharp/Test/Program.cs)  
+[IL create by templates](https://github.com/AndreevNikita/InSharp/blob/master/InSharp/Test/TestTemplate.cs)  
+  
 ## Also
-To see MSIL code, I used [ILSpy](https://github.com/icsharpcode/ILSpy). Codes to view MSIL are in [ShowCode](https://github.com/AndreevNikita/InSharp/tree/master/InSharp/InSharp)
+To see MSIL code, I used [ILSpy](https://github.com/icsharpcode/ILSpy). Codes to view MSIL are in [ShowCode](https://github.com/AndreevNikita/InSharp/tree/master/InSharp/ShowCode)
