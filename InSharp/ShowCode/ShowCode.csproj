@@ -50,5 +50,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LowLevelOpsHelper\LowLevelOpsHelper.csproj">
+      <Project>{045b160f-524f-4572-9238-e1e2dfe97b00}</Project>
+      <Name>LowLevelOpsHelper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

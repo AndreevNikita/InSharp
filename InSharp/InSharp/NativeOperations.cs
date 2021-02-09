@@ -126,6 +126,7 @@ namespace InSharp {
 
 		public ILUnaryOp(Expr operand1, Action<Expr, ILGen> opAction) {
 			this.opAction = opAction;
+			this.operand1 = operand1;
 			Type = operand1.Type;
 		}
 
