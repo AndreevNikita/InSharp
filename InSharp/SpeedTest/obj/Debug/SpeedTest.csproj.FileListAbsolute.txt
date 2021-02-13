@@ -1,0 +1,12 @@
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\bin\Debug\SpeedTest.exe.config
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\bin\Debug\SpeedTest.exe
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\bin\Debug\SpeedTest.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\bin\Debug\InSharp.dll
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\bin\Debug\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\bin\Debug\InSharp.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\bin\Debug\LowLevelOpsHelper.pdb
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\obj\Debug\SpeedTest.csprojAssemblyReference.cache
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\obj\Debug\SpeedTest.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\obj\Debug\SpeedTest.csproj.CopyComplete
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\obj\Debug\SpeedTest.exe
+C:\Users\Nick\Documents\GitHub\InSharp\InSharp\SpeedTest\obj\Debug\SpeedTest.pdb

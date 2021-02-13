@@ -1098,12 +1098,14 @@ namespace InSharp {
 						ILVar tempVar = ownerInstance.EmitSaveToTemp(gen);
 						tempVar.emitPushAddress(gen);
 					} else if(ownerInstance is ILConst) {
-						Console.WriteLine("//CATCHED CONST!");
 						ILVar tempVar = ownerInstance.EmitSaveToTemp(gen);
 						tempVar.emitPushAddress(gen);
 					} else if(ownerInstance is ILAssignable) { //Если метод вызывается у переменной, добавляем на вершину стека её адрес
-						Console.WriteLine("//CATCHED ILAssignable!");
 						((ILAssignable)ownerInstance).emitPushAddress(gen);
+					} else { //Если что-то другое, рассматриваем стандартный вариант с сохранением во временную переменную
+						ownerInstance.emitPush(gen);
+						ILVar tempVar = ownerInstance.EmitSaveToTemp(gen);
+						tempVar.emitPushAddress(gen);
 					}
 				} else { 
 					//Добавляем на вершину стека адрес владельца метода

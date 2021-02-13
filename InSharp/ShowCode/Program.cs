@@ -538,5 +538,9 @@ namespace ShowCode {
 			(int c, int d) t2 = (t1.a + t1.b, t1.a * t1.b);
 			return t2.c + t2.d;
 		}
+
+		static string func57(int a) { 
+			return a.ToString();
+		}
 	}
 }
