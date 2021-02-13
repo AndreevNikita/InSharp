@@ -1,6 +1,9 @@
 ﻿using InSharp;
+using Microsoft.CSharp;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -21,53 +24,85 @@ namespace SpeedTest {
 
 		private static void FixTime1() => fixedTime1 = CurrentTimeMicros();
 		private static void FixTime2() => fixedTime2 = CurrentTimeMicros();
-		private static void PrintTime(string str) {
+		private static void PrintTime(TimeSpan time, string str) {
 			long time2 = CurrentTimeMicros();
-			Console.WriteLine($"{str}: {fixedTime2 - fixedTime1} microseconds");
+			Console.WriteLine($"{str}: {time.Ticks / (TimeSpan.TicksPerMillisecond / 1000)} microseconds");
 		}
 
 
+		private static string CompilerTestFunc<T>(Func<Func<T, string>> compile, T testObject) { 
+			long compilationTime, executionTime;
 
+			Stopwatch timer = new Stopwatch();
+			//Compilation measurement
+			timer.Start();
+			Func<T, string> testFunc = compile();
+			timer.Stop();
+			compilationTime = timer.Elapsed.Ticks / (TimeSpan.TicksPerMillisecond / 1000);
+
+			timer.Reset();
+
+			//Execution measurement
+			timer.Start();
+			for(int counter = 0; counter < 10000000; counter++) {
+				testFunc(testObject);
+			}
+			timer.Stop();
+			executionTime = timer.Elapsed.Ticks / (TimeSpan.TicksPerMillisecond / 1000);
+
+
+			return $"Test output: \"{testFunc(testObject)}\"\nCompilation time: {compilationTime} microseconds\nExecution time: {executionTime} microseconds";
+
+		}
 
 		public static void Main(string[] args) {
-			TestClass test = new TestClass { A = 100, B = 500, C = 1000, str1 = "Hello ", str2 = "world!"};
+			TestClass testObject = new TestClass { A = 100, B = 500, C = 1000, str1 = "Hello ", str2 = "world!"};
+			Task<string> compiledTestTask, inSharpTestTask, exprTestTask, codeProviderTTestask;
 
-			FixTime1();
-			for(int counter = 0; counter < 10000000; counter++) {
-				SumAll_Compiled(test);
-			}
-			FixTime2();
-			PrintTime("Compiled execution test time");
-			Console.WriteLine();
+			//--------------------------------Async test--------------------------------
 
-			FixTime1();
-			Func<TestClass, string> func_insharp = InSharpBuild<TestClass>();
-			FixTime2();
-			PrintTime("InSharp build");
-			Console.WriteLine($"InSharp Result: {func_insharp(test)}");
-			FixTime1();
-			for(int counter = 0; counter < 10000000; counter++) {
-				func_insharp(test);
-			}
-			FixTime2();
-			PrintTime("InSharp execution test time");
-			Console.WriteLine();
-
-			FixTime1();
-			Func<TestClass, string> func_expr = ExprBuild<TestClass>();
-			FixTime2();
-			PrintTime("Expr build");
-			Console.WriteLine($"Expr Result: {func_expr(test)}");
-			FixTime1();
-			for(int counter = 0; counter < 10000000; counter++) {
-				func_expr(test);
-			}
-			FixTime2();
-			PrintTime("Expr execution test time");
-			Console.WriteLine();
+			compiledTestTask =		new Task<string>(() => CompilerTestFunc(() => SumAll_Compiled, testObject));
+			inSharpTestTask =		new Task<string>(() => CompilerTestFunc(() => InSharpCompile<TestClass>(), testObject));
+			exprTestTask =			new Task<string>(() => CompilerTestFunc(() => ExprCompile<TestClass>(), testObject));
+			codeProviderTTestask =	new Task<string>(() => CompilerTestFunc(() => CodeproviderCompile<TestClass>(), testObject));
 			
 
+			compiledTestTask.Start();
+			inSharpTestTask.Start();
+			exprTestTask.Start();
+			codeProviderTTestask.Start();
+
+			Task.WaitAll(compiledTestTask, exprTestTask, inSharpTestTask, codeProviderTTestask);
+
+			Console.WriteLine("Async Test:");
+			Console.WriteLine($"Compiled:\n{compiledTestTask.Result}\n");
+			Console.WriteLine($"InSharp:\n{inSharpTestTask.Result}\n");
+			Console.WriteLine($"Expression tree:\n{exprTestTask.Result}\n");
+			Console.WriteLine($"CodeProvider:\n{codeProviderTTestask.Result}\n");
+			Console.WriteLine();
+			Console.WriteLine();
+			Console.WriteLine();
+
+			//--------------------------------Sync test--------------------------------
+
+			compiledTestTask =		new Task<string>(() => CompilerTestFunc(() => SumAll_Compiled, testObject));
+			inSharpTestTask =		new Task<string>(() => CompilerTestFunc(() => InSharpCompile<TestClass>(), testObject));
+			exprTestTask =			new Task<string>(() => CompilerTestFunc(() => ExprCompile<TestClass>(), testObject));
+			codeProviderTTestask =	new Task<string>(() => CompilerTestFunc(() => CodeproviderCompile<TestClass>(), testObject));
 			
+
+			compiledTestTask.RunSynchronously();
+			inSharpTestTask.RunSynchronously();
+			exprTestTask.RunSynchronously();
+			codeProviderTTestask.RunSynchronously();
+
+			Task.WaitAll(compiledTestTask, exprTestTask, inSharpTestTask, codeProviderTTestask);
+
+			Console.WriteLine("Sync Test:");
+			Console.WriteLine($"Compiled:\n{compiledTestTask.Result}\n");
+			Console.WriteLine($"InSharp:\n{inSharpTestTask.Result}\n");
+			Console.WriteLine($"Expression tree:\n{exprTestTask.Result}\n");
+			Console.WriteLine($"CodeProvider:\n{codeProviderTTestask.Result}\n");
 
 			Console.ReadKey();
 		}
@@ -77,7 +112,7 @@ namespace SpeedTest {
 			return (obj.str1 + obj.str2 + "; " + (obj.A + obj.B + obj.C));
 		}
 
-		public static Func<T, string> InSharpBuild<T>() { 
+		public static Func<T, string> InSharpCompile<T>() { 
 
 			var gen = new ILGen<Func<T, string>>($"{typeof(T).Name}_sum_func", true);
 
@@ -85,13 +120,11 @@ namespace SpeedTest {
 
 			Expr intSumExpr = null;
 			Expr strSumExpr = null;
-			foreach(MemberInfo memberInfo in typeof(T).GetMembers().OrderBy((MemberInfo m) => m.MetadataToken)) { 
-				if(memberInfo.MemberType != MemberTypes.Field && memberInfo.MemberType != MemberTypes.Property)
-					continue;
+			foreach(MemberInfo memberInfo in typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property).OrderBy((MemberInfo m) => m.MetadataToken)) { 
 				Type memberType = memberInfo.MemberType == MemberTypes.Field ? ((FieldInfo)memberInfo).FieldType : ((PropertyInfo)memberInfo).PropertyType;
 				if(memberType == typeof(int))
 					intSumExpr = intSumExpr == null ? gen.args[0].Member(memberInfo) : Expr.Add(intSumExpr, gen.args[0].Member(memberInfo));
-				if(memberType == typeof(string))
+				else if(memberType == typeof(string))
 					strSumExpr = strSumExpr == null ? gen.args[0].Member(memberInfo) : Expr.Add(strSumExpr, gen.args[0].Member(memberInfo));
 			}
 
@@ -100,26 +133,75 @@ namespace SpeedTest {
 			return gen.compile();
 		}
 
-
-		public static Func<T, string> ExprBuild<T>() { 
+		public static Func<T, string> ExprCompile<T>() { 
 			ParameterExpression objectParam = Expression.Parameter(typeof(T));
 			
 
 			MethodInfo concatMethod = typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) });
 			Expression strSumExpr = null;
-			foreach(MemberInfo memberInfo in typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field ? ((FieldInfo)m).FieldType == typeof(string) : m.MemberType == MemberTypes.Property ? ((PropertyInfo)m).PropertyType == typeof(string) : false).OrderBy((MemberInfo m) => m.MetadataToken)) { 
-				Expression memberExpression = memberInfo.MemberType == MemberTypes.Property ? Expression.Property(objectParam, (PropertyInfo)memberInfo) : Expression.Field(objectParam, (FieldInfo)memberInfo);
-				strSumExpr = strSumExpr == null ? memberExpression : Expression.Call(null, concatMethod, strSumExpr, memberExpression);
-			}
-
 			Expression intSumExpr = null;
-			foreach(MemberInfo memberInfo in typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field ? ((FieldInfo)m).FieldType == typeof(int) : m.MemberType == MemberTypes.Property ? ((PropertyInfo)m).PropertyType == typeof(int) : false).OrderBy((MemberInfo m) => m.MetadataToken)) { 
-				Expression memberExpression = memberInfo.MemberType == MemberTypes.Property ? Expression.Property(objectParam, (PropertyInfo)memberInfo) : Expression.Field(objectParam, (FieldInfo)memberInfo);
-				intSumExpr = intSumExpr == null ? memberExpression : Expression.Add(intSumExpr, memberExpression);
+			foreach(MemberInfo memberInfo in typeof(T).GetMembers().Where(m => m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property).OrderBy((MemberInfo m) => m.MetadataToken)) { 
+				Type memberType = memberInfo.MemberType == MemberTypes.Field ? ((FieldInfo)memberInfo).FieldType : ((PropertyInfo)memberInfo).PropertyType;
+				if(memberType == typeof(int)) {
+					Expression memberExpression = memberInfo.MemberType == MemberTypes.Property ? Expression.Property(objectParam, (PropertyInfo)memberInfo) : Expression.Field(objectParam, (FieldInfo)memberInfo);
+					intSumExpr = intSumExpr == null ? memberExpression : Expression.Add(intSumExpr, memberExpression);
+				} else if(memberType == typeof(string)) {
+					Expression memberExpression = memberInfo.MemberType == MemberTypes.Property ? Expression.Property(objectParam, (PropertyInfo)memberInfo) : Expression.Field(objectParam, (FieldInfo)memberInfo);
+					strSumExpr = strSumExpr == null ? memberExpression : Expression.Call(null, concatMethod, strSumExpr, memberExpression);
+				}
 			}
 
 			MethodInfo intToStringMethod = typeof(int).GetMethod("ToString", new Type[] { });
 			return Expression.Lambda<Func<T, string>>(Expression.Call(concatMethod, Expression.Call(concatMethod, strSumExpr, Expression.Constant("; ", typeof(string))), Expression.Call(intSumExpr, intToStringMethod)), objectParam).Compile();
+		}
+
+		public static Func<T, string> CodeproviderCompile<T>() { 
+		
+			string strSumString = null, intSumString = null;
+
+			foreach(MemberInfo memberInfo in typeof(T).GetMembers().OrderBy((MemberInfo m) => m.MetadataToken)) { 
+				if(memberInfo.MemberType != MemberTypes.Field && memberInfo.MemberType != MemberTypes.Property)
+					continue;
+				Type memberType = memberInfo.MemberType == MemberTypes.Field ? ((FieldInfo)memberInfo).FieldType : ((PropertyInfo)memberInfo).PropertyType;
+				if(memberType == typeof(int))
+					intSumString += intSumString == null ? $"obj.{memberInfo.Name}" : $" + obj.{memberInfo.Name}";
+				if(memberType == typeof(string))
+					strSumString += strSumString == null ? $"obj.{memberInfo.Name}" : $" + obj.{memberInfo.Name}";
+			}
+
+
+			var code = $@"
+
+				public static class {typeof(T).Name}_SumWrapper {{
+				   
+					public static string SumFunc({typeof(T).FullName} obj) {{
+						return {strSumString} + {"\"; \""} + ( {intSumString} );
+					}}
+
+				}}";
+
+			var options = new CompilerParameters();
+			options.GenerateExecutable = false;
+			options.GenerateInMemory = false;
+
+			options.ReferencedAssemblies.Add("System.dll");
+			options.ReferencedAssemblies.Add("System.dll");
+			options.ReferencedAssemblies.Add("System.Data.dll");
+			options.ReferencedAssemblies.Add("System.Xml.dll");
+			options.ReferencedAssemblies.Add("mscorlib.dll");
+			options.ReferencedAssemblies.Add("System.Windows.Forms.dll");
+			options.ReferencedAssemblies.Add(AppDomain.CurrentDomain.FriendlyName);
+
+			var provider = new CSharpCodeProvider();
+			var compile = provider.CompileAssemblyFromSource(options, code);
+
+			foreach(var compileError in compile.Errors) { 
+				Console.WriteLine(compileError.ToString());
+			}
+
+			var type = compile.CompiledAssembly.GetType($"{typeof(T).Name}_SumWrapper");
+
+			return (Func<T, string>)type.GetMethod("SumFunc").CreateDelegate(typeof(Func<T, string>));
 		}
 
 
