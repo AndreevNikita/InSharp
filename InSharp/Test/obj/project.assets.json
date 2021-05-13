@@ -186,11 +186,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\Test\\Test.csproj",
+      "projectUniqueName": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\Test\\Test.csproj",
       "projectName": "Test",
-      "projectPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\Test\\Test.csproj",
+      "projectPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\Test\\Test.csproj",
       "packagesPath": "C:\\Users\\Nick\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\Test\\obj\\",
+      "outputPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\Test\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Nick\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -207,8 +207,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\InSharp.csproj": {
-              "projectPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\InSharp.csproj"
+            "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj": {
+              "projectPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj"
             }
           }
         }
@@ -237,7 +237,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

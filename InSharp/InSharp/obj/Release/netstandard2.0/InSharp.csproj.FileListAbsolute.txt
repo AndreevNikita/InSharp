@@ -1,0 +1,12 @@
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\bin\Release\netstandard2.0\InSharp.deps.json
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\bin\Release\netstandard2.0\InSharp.dll
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\bin\Release\netstandard2.0\InSharp.pdb
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\bin\Release\netstandard2.0\LowLevelOpsHelper.dll
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\bin\Release\netstandard2.0\LowLevelOpsHelper.pdb
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\obj\Release\netstandard2.0\InSharp.csprojAssemblyReference.cache
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\obj\Release\netstandard2.0\InSharp.AssemblyInfoInputs.cache
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\obj\Release\netstandard2.0\InSharp.AssemblyInfo.cs
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\obj\Release\netstandard2.0\InSharp.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\obj\Release\netstandard2.0\InSharp.csproj.CopyComplete
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\obj\Release\netstandard2.0\InSharp.dll
+C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\obj\Release\netstandard2.0\InSharp.pdb

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>InSharp</id>
+    <version>1.0.0</version>
+    <authors>Nikita Andreev</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <projectUrl>https://github.com/AndreevNikita/InSharp</projectUrl>
+    <description>Package Description</description>
+    <copyright>Nikita Andreev</copyright>
+    <tags>c# c-sharp reflection compiler runtime-compilation msil c-sharp-library code-build msil-compiler</tags>
+    <repository url="https://github.com/AndreevNikita/InSharp" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="LowLevelOpsHelper" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.Emit.ILGeneration" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\Nick\Documents\repos\InSharp\InSharp\InSharp\bin\Release\netstandard2.0\InSharp.dll" target="lib\netstandard2.0\InSharp.dll" />
+    <file src="C:\Users\Nick\Documents\repos\InSharp\LICENSE" target="LICENSE" />
+  </files>
+</package>

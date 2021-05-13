@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\InSharp.csproj": {}
+    "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\InSharp.csproj": {
+    "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\InSharp.csproj",
+        "projectUniqueName": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj",
         "projectName": "InSharp",
-        "projectPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\InSharp.csproj",
+        "projectPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj",
         "packagesPath": "C:\\Users\\Nick\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\InSharp\\obj\\",
+        "outputPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Nick\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "netstandard2.0": {
             "targetAlias": "netstandard2.0",
             "projectReferences": {
-              "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj": {
-                "projectPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj"
+              "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj": {
+                "projectPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj"
               }
             }
           }
@@ -69,18 +69,18 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj": {
+    "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj",
+        "projectUniqueName": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj",
         "projectName": "LowLevelOpsHelper",
-        "projectPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj",
+        "projectPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj",
         "packagesPath": "C:\\Users\\Nick\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\LowLevelOpsHelper\\obj\\",
+        "outputPath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Nick\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -126,7 +126,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     }

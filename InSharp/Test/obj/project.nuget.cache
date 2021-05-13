@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "DSCT+d7F8dnNSCqwZwzpcg86IjiPsTyj/Lo9DYB0BJB8MPNWeYyRZHsnrbNApBNV/P5X72ZMN/TJd7G9uPfH7g==",
+  "dgSpecHash": "awrAFlFXzWXtv7b37IM8XXohjotCp42Yx9rWutUpEDeHyaMutJrvCnwUxCnMgOaz4ui9prEYg56o9gnz01K4Yg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Nick\\Documents\\GitHub\\InSharp\\InSharp\\Test\\Test.csproj",
+  "projectFilePath": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\Test\\Test.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nick\\.nuget\\packages\\system.reflection.emit.ilgeneration\\4.7.0\\system.reflection.emit.ilgeneration.4.7.0.nupkg.sha512",
     "C:\\Users\\Nick\\.nuget\\packages\\system.reflection.emit.lightweight\\4.7.0\\system.reflection.emit.lightweight.4.7.0.nupkg.sha512"
