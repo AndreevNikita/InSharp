@@ -5,7 +5,7 @@
   },
   "projects": {
     "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "restore": {
         "projectUniqueName": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj",
         "projectName": "InSharp",
@@ -74,7 +74,7 @@
       }
     },
     "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "restore": {
         "projectUniqueName": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\LowLevelOpsHelper\\LowLevelOpsHelper.csproj",
         "projectName": "LowLevelOpsHelper",

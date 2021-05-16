@@ -8,7 +8,9 @@
     <PackageTags>c# c-sharp reflection compiler runtime-compilation msil c-sharp-library code-build msil-compiler</PackageTags>
     <Authors>Nikita Andreev</Authors>
     <Copyright>Nikita Andreev</Copyright>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Description>Library for runtime MSIL functions compilation</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

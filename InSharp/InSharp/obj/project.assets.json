@@ -47,7 +47,7 @@
           "lib/netstandard2.0/System.Reflection.Emit.Lightweight.dll": {}
         }
       },
-      "LowLevelOpsHelper/1.0.0": {
+      "LowLevelOpsHelper/1.0.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "compile": {
@@ -320,7 +320,7 @@
         "version.txt"
       ]
     },
-    "LowLevelOpsHelper/1.0.0": {
+    "LowLevelOpsHelper/1.0.1": {
       "type": "project",
       "path": "../LowLevelOpsHelper/LowLevelOpsHelper.csproj",
       "msbuildProject": "../LowLevelOpsHelper/LowLevelOpsHelper.csproj"
@@ -328,7 +328,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
-      "LowLevelOpsHelper >= 1.0.0",
+      "LowLevelOpsHelper >= 1.0.1",
       "NETStandard.Library >= 2.0.3",
       "System.Reflection.Emit.ILGeneration >= 4.7.0",
       "System.Reflection.Emit.Lightweight >= 4.7.0"
@@ -338,7 +338,7 @@
     "C:\\Users\\Nick\\.nuget\\packages\\": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "restore": {
       "projectUniqueName": "C:\\Users\\Nick\\Documents\\repos\\InSharp\\InSharp\\InSharp\\InSharp.csproj",
       "projectName": "InSharp",

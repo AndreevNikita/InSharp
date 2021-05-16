@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>LowLevelOpsHelper</id>
+    <version>1.0.1</version>
+    <authors>LowLevelOpsHelper</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <description>The part util library of InSharp</description>
+    <tags>c# insharp reflection</tags>
+    <repository url="https://github.com/AndreevNikita/InSharp" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\Nick\Documents\repos\InSharp\InSharp\LowLevelOpsHelper\bin\Release\netstandard2.0\LowLevelOpsHelper.dll" target="lib\netstandard2.0\LowLevelOpsHelper.dll" />
+    <file src="C:\Users\Nick\Documents\repos\InSharp\LICENSE" target="LICENSE" />
+  </files>
+</package>

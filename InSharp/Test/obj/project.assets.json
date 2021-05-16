@@ -20,11 +20,11 @@
           "lib/netcoreapp2.0/_._": {}
         }
       },
-      "InSharp/1.0.0": {
+      "InSharp/1.0.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
-          "LowLevelOpsHelper": "1.0.0",
+          "LowLevelOpsHelper": "1.0.1",
           "System.Reflection.Emit.ILGeneration": "4.7.0",
           "System.Reflection.Emit.Lightweight": "4.7.0"
         },
@@ -35,7 +35,7 @@
           "bin/placeholder/InSharp.dll": {}
         }
       },
-      "LowLevelOpsHelper/1.0.0": {
+      "LowLevelOpsHelper/1.0.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "compile": {
@@ -164,12 +164,12 @@
         "version.txt"
       ]
     },
-    "InSharp/1.0.0": {
+    "InSharp/1.0.1": {
       "type": "project",
       "path": "../InSharp/InSharp.csproj",
       "msbuildProject": "../InSharp/InSharp.csproj"
     },
-    "LowLevelOpsHelper/1.0.0": {
+    "LowLevelOpsHelper/1.0.1": {
       "type": "project",
       "path": "../LowLevelOpsHelper/LowLevelOpsHelper.csproj",
       "msbuildProject": "../LowLevelOpsHelper/LowLevelOpsHelper.csproj"
@@ -177,7 +177,7 @@
   },
   "projectFileDependencyGroups": {
     "net5.0": [
-      "InSharp >= 1.0.0"
+      "InSharp >= 1.0.1"
     ]
   },
   "packageFolders": {
