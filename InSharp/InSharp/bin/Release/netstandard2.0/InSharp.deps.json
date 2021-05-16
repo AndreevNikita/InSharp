@@ -7,9 +7,9 @@
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "InSharp/1.0.1": {
+      "InSharp/1.0.2": {
         "dependencies": {
-          "LowLevelOpsHelper": "1.0.0",
+          "LowLevelOpsHelper": "1.0.1",
           "NETStandard.Library": "2.0.3",
           "System.Reflection.Emit.ILGeneration": "4.7.0",
           "System.Reflection.Emit.Lightweight": "4.7.0"
@@ -43,7 +43,7 @@
           }
         }
       },
-      "LowLevelOpsHelper/1.0.0": {
+      "LowLevelOpsHelper/1.0.1": {
         "runtime": {
           "LowLevelOpsHelper.dll": {}
         }
@@ -51,7 +51,7 @@
     }
   },
   "libraries": {
-    "InSharp/1.0.1": {
+    "InSharp/1.0.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -84,7 +84,7 @@
       "path": "system.reflection.emit.lightweight/4.7.0",
       "hashPath": "system.reflection.emit.lightweight.4.7.0.nupkg.sha512"
     },
-    "LowLevelOpsHelper/1.0.0": {
+    "LowLevelOpsHelper/1.0.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

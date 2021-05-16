@@ -20,7 +20,7 @@
           "lib/netcoreapp2.0/_._": {}
         }
       },
-      "InSharp/1.0.1": {
+      "InSharp/1.0.2": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
@@ -164,7 +164,7 @@
         "version.txt"
       ]
     },
-    "InSharp/1.0.1": {
+    "InSharp/1.0.2": {
       "type": "project",
       "path": "../InSharp/InSharp.csproj",
       "msbuildProject": "../InSharp/InSharp.csproj"
@@ -177,7 +177,7 @@
   },
   "projectFileDependencyGroups": {
     "net5.0": [
-      "InSharp >= 1.0.1"
+      "InSharp >= 1.0.2"
     ]
   },
   "packageFolders": {

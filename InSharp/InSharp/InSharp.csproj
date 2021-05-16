@@ -10,7 +10,7 @@
     <Copyright>Nikita Andreev</Copyright>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Library for runtime MSIL functions compilation</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
